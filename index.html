@@ -12,69 +12,106 @@
     #toplamOdeme { background: lightgreen; padding: 10px; margin-top: 10px; font-weight: bold; display: inline-block; }
     .iptal-kayit { text-decoration: line-through; color: red; }
   </style>
-</head>
+<style>
+  body {
+    font-family: Arial;
+    padding: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  input, select, button {
+    width: 100%;
+    max-width: 300px;
+    margin: 6px 0;
+    font-size: 16px;
+  }
+
+  table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+
+  .toggle-button {
+    padding: 8px 12px;
+    margin: 4px;
+    font-size: 16px;
+    display: inline-block;
+  }
+
+  #loginEkrani input {
+    width: 90%;
+    max-width: 300px;
+  }
+
+  #loginEkrani button {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
+</style>
+<style>
+.toggle-button input[type="checkbox"]:checked + label {
+  background-color: #b3ffcc !important; /* Açık yeşil */
+}
+</style></head>
 <body>
+<style>
+.odenmis-kayit { background-color: #e0f7ff; }  /* açık mavi */
+.odenmemis-kayit { background-color: #ffe0e6; }  /* açık pembe */
+</style>
+<style>
+.menu-button {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  margin: 4px;
+  cursor: pointer;
+  background-color: white;
+}
 
+.menu-button:hover {
+  background-color: #def;
+}
+</style>
 <div id="loginEkrani" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#eef; display:flex; align-items:center; justify-content:center; z-index:9999;">
-  <div style="background:white; padding:30px; border:1px solid #ccc; box-shadow:2px 2px 10px rgba(0,0,0,0.2); text-align:center;">
-    <h2>Giriş Yap</h2>
-    <input type="text" id="kullaniciAdi" placeholder="Kullanıcı Adı" style="margin:5px; padding:8px; width:200px;"><br>
-    <input type="password" id="sifre" placeholder="Şifre" style="margin:5px; padding:8px; width:200px;"><br>
-    <button onclick="kontrolEtGiris()">Giriş</button>
-    <p id="girisHata" style="color:red; display:none;">Hatalı kullanıcı adı veya şifre</p>
-  </div>
+<div style="background:white; padding:30px; border:1px solid #ccc; box-shadow:2px 2px 10px rgba(0,0,0,0.2); text-align:center;">
+<h2>Giriş Yap</h2>
+<input id="kullaniciAdi" placeholder="Kullanıcı Adı" style="margin:5px; padding:8px; width:200px;" type="text"/><br/>
+<input id="sifre" placeholder="Şifre" style="margin:5px; padding:8px; width:200px;" type="password"/><br/>
+<button onclick="kontrolEtGiris()">Giriş</button>
+<p id="girisHata" style="color:red; display:none;">Hatalı kullanıcı adı veya şifre</p>
 </div>
-
-<button id="btnListe">Liste</button><button id="btnPersonel">Personel Listesi</button>
-<button id="btnCari">Cari Listesi</button>
-<button id="btnYeniArac">Yeni Araç</button>
-<button id="btnRapor">Personel Hakediş Raporu</button>
-<button onclick="sifirlaDatabase()">Tüm Kayıtları SİL</button>
-<div id="kayitFormu">
-<h2>Araç Kayıt Formu</h2>
-<label>Plaka: <input id="plaka" type="text"/></label><br/><br/>
-<label>Açıklama: <input id="aciklama" type="text"/></label><br/><br/>
-<label>Ana İşlem: 
+</div>
+<button class="menu-button" id="btnListe" title="Ana Menü">🏠</button>
+<button class="menu-button" id="btnYeniArac" title="Yeni Araç">🚗</button>
+<button class="menu-button" id="btnRapor" title="Rapor">📊</button>
+<button class="menu-button" id="btnAyarlar" title="Ayarlar">⚙️</button>
+<div id="kayitFormu" style="background: #ffe6e6; display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0;">
+<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><h2>Araç Kayıt Formu</h2><div id="toplamOdeme" style=" padding-left: 40px; float: right; margin-right: 40px">Toplam Ödeme: 0 ₺</div></div><div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px;"><label>Plaka No: <input id="plaka" type="text"/></label><label>Açıklama: <input id="aciklama" type="text"/></label></div><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;"><label>Ana İşlem: 
       <select id="anaIslem" onchange="guncelleToplamOdeme()">
 <option>İÇDIŞ</option><option>DIŞ</option><option>B.İÇDIŞ</option>
 <option>B.DIŞ</option><option>M.İÇDIŞ</option><option>M.DIŞ</option><option>MOTOR</option>
 </select>
-</label><br/><br/>
-<label>Cari: <select id="cari"><option>Bireysel</option></select></label><br/><br/>
-<label>Yıkayan Personel: <select id="personel"><option>Seçiniz</option></select></label><br/><br/>
-<label>Ödeme Tipi: 
+</label><label>Yıkayan Personel: <select id="personel"><option>Seçiniz</option></select></label><label>Ödeme Tipi: 
       <select id="odemeTipi">
 <option>Seçiniz</option><option>nakit</option><option>kredi kartı</option><option>vadeli</option>
 </select>
-</label><br/><br/>
-<div>Ekstralar:</div>
-<div>
-<div class="toggle-button" data-value="OZON" onmouseup="toggleEkstra(this)">OZON</div>
-<div class="toggle-button" data-value="CİLA" onmouseup="toggleEkstra(this)">CİLA</div>
-<div class="toggle-button" data-value="BUHAR" onmouseup="toggleEkstra(this)">BUHAR</div>
-<div class="toggle-button" data-value="DETAY1" onmouseup="toggleEkstra(this)">DETAY1</div>
-<div class="toggle-button" data-value="DETAY2" onmouseup="toggleEkstra(this)">DETAY2</div>
-<div class="toggle-button" data-value="PASTACİLA" onmouseup="toggleEkstra(this)">PASTACİLA</div>
-</div><br/>
-<label>Ücret Farkı: <input id="ucretFarki" onchange="guncelleToplamOdeme()" type="number" value="0"/></label><br/><br/>
-<label>Harici Ücret: <input id="hariciUcret" onchange="guncelleToplamOdeme()" type="number" value="0"/></label><br/><br/>
-<div id="toplamOdeme">Toplam Ödeme: 0 ₺</div><br/><br/>
-<button id="btnKaydet">KAYIT</button>
-<button id="btnSil">SİL</button>
-<button id="btnVazgec">VAZGEÇ</button>
-</div>
+</label><label>Cari: <select id="cari"><option>Bireysel</option></select></label></div><div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; align-items: center;"><span style="margin-right: 10px; font-weight: bold;">Ekstralar:</span><div class="toggle-button" data-value="OZON" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">OZON</div><div class="toggle-button" data-value="CİLA" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">CİLA</div><div class="toggle-button" data-value="BUHAR" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">BUHAR</div><div class="toggle-button" data-value="DETAY1" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">DETAY1</div><div class="toggle-button" data-value="DETAY2" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">DETAY2</div><div class="toggle-button" data-value="PASTACİLA" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 80px; margin: 2px; text-align: center;">PASTACİLA</div></div><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;"></div><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;"><label>Ücret Farkı: <input id="ucretFarki" onchange="guncelleToplamOdeme()" type="number" value="0"/></label><label>Harici Ücret: <input id="hariciUcret" onchange="guncelleToplamOdeme()" type="number" value="0"/></label></div>
+<div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"></div><div style="display: flex; gap: 6px; margin-top: 8px; justify-content: flex-start;"><button class="menu-button" id="btnKaydet" style="min-width: 70px; font-size: 12px; padding: 4px;">💾</button><button class="menu-button" id="btnSil" style="min-width: 70px; font-size: 12px; padding: 4px;">🗑️</button><button class="menu-button" id="btnVazgec" style="min-width: 70px; font-size: 12px; padding: 4px;">❌</button></div></div><div style="display: flex; gap: 6px; margin-top: 6px; justify-content: flex-start;"></div>
 <div id="listeFormu">
-<h3>Araç Listesi</h3>
-<div id="listeAlani"><h3>Filtreleme</h3><div style="margin-bottom: 10px;">
-<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px;">
-<label>Başla: <input id="filterStartDate" type="date" value=""/></label>
-<label>Bitiş: <input id="filterEndDate" type="date" value=""/></label>
-<label>Plaka: <input id="filterPlaka" style="width: 80px;" type="text"/></label>
-<label>Personel: <input id="filterPersonel" style="width: 80px;" type="text"/></label>
-<span class="toggle-button active" id="filterOdenmis" onclick="this.classList.toggle('active')">Ödenmişler</span>
-<span class="toggle-button active" id="filterOdenmemis" onclick="this.classList.toggle('active')">Ödenmemişler</span>
-<button onclick="filtreleKayitlar()">FİLTRELE</button>
-<button onclick="listeleKayitlar()">TEMİZLE</button>
+<div id="listeAlani"><div style="background: #e6f0ff; margin-bottom: 10px;">
+<div style="display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; margin-bottom: 10px;">
+<label style="display: flex; align-items: center; gap: 4px;">⏰ <input id="filterStartDate" type="date" value=""/></label>
+<label style="display: flex; align-items: center; gap: 4px;">🏁 <input id="filterEndDate" type="date" value=""/></label>
+<label style="display: flex; align-items: center; gap: 4px;">Plaka No: <input id="filterPlaka" placeholder="Plaka No" style="width: 80px;" type="text"/></label>
+<label style="display: flex; align-items: center; gap: 4px;">Personel: <input id="filterPersonel" placeholder="Personel Adı" style="width: 80px;" type="text"/></label>
+<span class="toggle-button active" id="filterOdenmis" onclick="this.classList.toggle('active')" title="Ödenmişler">💰</span>
+<span class="toggle-button active" id="filterOdenmemis" onclick="this.classList.toggle('active')" title="Ödenmemişler">💰Vazgeç</span>
+<button class="menu-button" id="filterBtn" onclick="filtreleKayitlar()" title="Filtrele">🔍</button>
+<button class="menu-button" id="clearBtn" onclick="listeleKayitlar()" title="Temizle">Vazgeç</button>
 </div>
 <script>
 
@@ -93,7 +130,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Ortak görünüm kontrol fonksiyonu
 function gosterSadeceListe() {
-  document.getElementById("personelFormu").style.display = "none";
+  const filt1 = document.getElementById("filterOdenmis");
+  const filt2 = document.getElementById("filterOdenmemis");
+  if (filt1 && !filt1.classList.contains("active")) filt1.classList.add("active");
+  if (filt2 && !filt2.classList.contains("active")) filt2.classList.add("active");
+document.getElementById("personelFormu").style.display = "none";
   document.getElementById("kayitFormu").style.display = "none";
   document.getElementById("listeFormu").style.display = "block";
 
@@ -111,18 +152,8 @@ function gosterSadeceForm() {
 }
 
 // Liste butonuna basıldığında sadece liste göster
-document.getElementById("btnListe").addEventListener("click", () => {
-  gizleRaporFormu();
-    gosterSadeceListe();
-});
 
 // Yeni Araç butonuna basıldığında form açılır, liste kapanır
-document.getElementById("btnYeniArac").addEventListener("click", () => {
-  resetForm();
-  gizleRaporFormu();
-  gosterSadeceForm();
-  guncelleToplamOdeme();
-});
 
 // Formdaki "Vazgeç" butonuna basıldığında tekrar listeye dön
 document.getElementById("btnVazgec").addEventListener("click", () => {
@@ -138,10 +169,6 @@ function gosterSadecePersonel() {
   document.getElementById("personelFormu").style.display = "block";
 }
 
-document.getElementById("btnPersonel").addEventListener("click", () => {
-  gizleRaporFormu();
-  gosterSadecePersonel();
-});
 
 function gosterSadeceCari() {
   document.getElementById("kayitFormu").style.display = "none";
@@ -150,18 +177,14 @@ function gosterSadeceCari() {
   document.getElementById("cariFormu").style.display = "block";
 }
 
-document.getElementById("btnCari").addEventListener("click", () => {
-  gosterSadeceCari();
-});
-
 
 
 </script>
 </div><table border="1" cellpadding="5" cellspacing="0">
 <thead>
 <tr>
-<th>Sıra No</th><th>Plaka</th><th>İşlem</th><th>Ekstra</th><th>Ücret</th><th>Cari</th>
-<th>Personel</th><th>Ödeme</th><th>Açıklama</th><th>Ücret Farkı</th><th>Kayıt Zamanı</th><th>Harici Ücret</th>
+<th style="background-color: lightgreen;">Sıra No</th><th style="background-color: lightgreen;">Plaka</th><th style="background-color: lightgreen;">İşlem</th><th style="background-color: lightgreen;">Ekstra</th><th style="background-color: lightgreen;">Ücret</th><th style="background-color: lightgreen;">Cari</th>
+<th style="background-color: lightgreen;">Personel</th><th style="background-color: lightgreen;">Ödeme</th><th style="background-color: lightgreen;">Kayıt Zamanı</th>
 </tr>
 </thead>
 <tbody id="listeGovde"></tbody>
@@ -217,11 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
     db.createObjectStore("kayitlar", { keyPath: "id" });
   };
 
-  document.getElementById("btnYeniArac").addEventListener("click", () => {
-    resetForm();
-    document.getElementById("kayitFormu").style.display = "block";
-    guncelleToplamOdeme();
-  });
 
   document.getElementById("btnKaydet").addEventListener("click", kaydetKayit);
   document.getElementById("btnSil").addEventListener("click", () => {
@@ -372,11 +390,16 @@ function listeleKayitlar() {
 
       const tr = document.createElement("tr");
       if (d.cancelled) tr.classList.add("iptal-kayit");
-      tr.innerHTML = `
-        <td>${d.sirano}</td><td>${d.plaka}</td><td>${d.anaIslem}</td><td>${d.ekstra.join(", ")}</td>
+      let sinif = "";
+      const odeme = d.odemeTipi?.toLowerCase();
+      if (odeme && odeme !== "seçiniz") sinif = "odenmis-kayit";
+      else sinif = "odenmemis-kayit";
+      if (d.cancelled) sinif = "iptal-kayit";
+      tr.className = sinif;
+      tr.innerHTML = `<td>${d.sirano}</td><td>${d.plaka}</td><td>${d.anaIslem}</td><td>${d.ekstra.join(", ")}</td>
         <td>${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td><td>${d.cari}</td>
-        <td>${d.personel}</td><td>${d.odemeTipi}</td><td>${d.aciklama}</td>
-        <td>${d.ucretFarki || 0}</td><td>${d.kayitZamani}</td><td>${d.hariciUcret || 0}</td>`;
+        <td>${d.personel}</td><td>${d.odemeTipi}</td>
+        <td>${d.kayitZamani}</td>`;
       tr.onclick = () => formuDoldur(d);
       tbody.appendChild(tr);
     });
@@ -438,17 +461,21 @@ function filtreleKayitlar() {
     filtered.sort((a, b) => b.sirano.localeCompare(a.sirano)).forEach(d => {
       const tr = document.createElement("tr");
       if (d.cancelled) tr.classList.add("iptal-kayit");
-      tr.innerHTML = `
-        <td>${d.sirano}</td><td>${d.plaka}</td><td>${d.anaIslem}</td><td>${d.ekstra.join(", ")}</td>
+      let sinif = "";
+      const odeme = d.odemeTipi?.toLowerCase();
+      if (odeme && odeme !== "seçiniz") sinif = "odenmis-kayit";
+      else sinif = "odenmemis-kayit";
+      if (d.cancelled) sinif = "iptal-kayit";
+      tr.className = sinif;
+      tr.innerHTML = `<td>${d.sirano}</td><td>${d.plaka}</td><td>${d.anaIslem}</td><td>${d.ekstra.join(", ")}</td>
         <td>${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td><td>${d.cari}</td>
-        <td>${d.personel}</td><td>${d.odemeTipi}</td><td>${d.aciklama}</td>
-        <td>${d.ucretFarki || 0}</td><td>${d.kayitZamani}</td><td>${d.hariciUcret || 0}</td>`;
+        <td>${d.personel}</td><td>${d.odemeTipi}</td>
+        <td>${d.kayitZamani}</td>`;
       tr.onclick = () => formuDoldur(d);
       tbody.appendChild(tr);
     });
   };
 }
-
 
 
 </script>
@@ -468,15 +495,13 @@ function filtreleKayitlar() {
 <br/>
 <button onclick="aktarCariComboboxa()">Kayıt Formuna Aktar</button>
 </div>
-
 <div id="raporFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: #ddf;">
-  <h2>Personel Hakediş Raporu</h2>
-  <label>Rapor Tarihi:
-    <input type="date" id="raporTarihi" value="2025-06-21" />
-  </label>
-  <div id="raporTabloAlani" style="margin-top: 20px;"></div>
+<h2>Personel Hakediş Raporu</h2>
+<label>Rapor Tarihi:
+    <input id="raporTarihi" type="date" value="2025-06-21"/>
+</label>
+<div id="raporTabloAlani" style="margin-top: 20px;"></div>
 </div>
-
 <script>
 
 function gizleRaporFormu() {
@@ -556,8 +581,7 @@ function aktarCariComboboxa() {
   }
 
   alert("Cari listesi ve veritabanı güncellendi.");
-}
-</script>
+}</script>
 <script>
 
 function gizleRaporFormu() {
@@ -569,11 +593,6 @@ function gizleCariFormu() {
 }
 
 // Liste butonuna tıklanınca
-document.getElementById("btnListe").addEventListener("click", () => {
-    gizleCariFormu();
-    gizleRaporFormu();
-    gosterSadeceListe();
-});
 
 
 function gosterSadeceRapor() {
@@ -584,27 +603,11 @@ function gosterSadeceRapor() {
   document.getElementById("raporFormu").style.display = "block";
 }
 
-document.getElementById("btnRapor").addEventListener("click", () => {
-  gosterSadeceRapor();
-});
 
 
 // Personel butonuna tıklanınca
-document.getElementById("btnPersonel").addEventListener("click", () => {
-    gizleCariFormu();
-    gizleRaporFormu();
-  gosterSadecePersonel();
-});
 
 // Yeni Araç butonuna tıklanınca
-document.getElementById("btnYeniArac").addEventListener("click", () => {
-    gizleCariFormu();
-    resetForm();
-    gizleRaporFormu();
-  gosterSadeceForm();
-    guncelleToplamOdeme();
-});
-
 
 </script>
 <script>
@@ -766,9 +769,7 @@ function doldurCariFormu() {
     }
   };
 }
-
 </script>
-
 <script>
 function olusturHakedişRaporu() {
   const seciliTarih = document.getElementById("raporTarihi").value;
@@ -859,23 +860,7 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("change", olusturHakedişRaporu);
   }
 });
-
-document.getElementById("btnRapor").addEventListener("click", () => {
-  gosterSadeceRapor();
-  const input = document.getElementById("raporTarihi");
-  if (input) {
-    olusturHakedişRaporu();
-  }
-});
 </script>
-
-
-
-
-
-
-
-
 <script>
 function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, seciliTarih) {
   let kalanNakit = 0;
@@ -936,10 +921,7 @@ function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, sec
   const container = document.createElement("div");
   container.innerHTML = html;
   document.getElementById("raporTabloAlani").appendChild(container);
-}
-</script>
-
-
+}</script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const cariSelect = document.getElementById("cari");
@@ -950,21 +932,112 @@ document.addEventListener("DOMContentLoaded", () => {
       odemeTipiSelect.value = "vadeli";
     }
   });
-});
-</script>
-
-
+});</script>
 <script>
 function kontrolEtGiris() {
   const kullanici = document.getElementById("kullaniciAdi").value;
   const sifre = document.getElementById("sifre").value;
-  if (kullanici === "Doruk" && sifre === "Faruk-1536") {
+  if (kullanici === "d" && sifre === "f") {
     document.getElementById("loginEkrani").style.display = "none";
   } else {
     document.getElementById("girisHata").style.display = "block";
   }
+}</script>
+<script>
+
+// Bütün butonlara bunu entegre et
+document.addEventListener("DOMContentLoaded", () => {
+
+
+
+
+});</script>
+<div id="ayarlarFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: #f9f9f9;"><h2>Ayarlar</h2><button id="btnPersonel">Personel Listesi</button><button id="btnCari">Cari Listesi</button><button id="btnSifirlaDB">Tüm Kayıtları Sil</button></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btnAyarlar").addEventListener("click", () => {
+    gizleTumFormlar();
+    document.getElementById("ayarlarFormu").style.display = "block";
+  });
+});
+
+function kaydetAyarlar() {
+  const ayar1 = document.getElementById("ayar1").value;
+  const ayar2 = document.getElementById("ayar2").checked;
+  alert("Ayarlar kaydedildi:\nAyar1: " + ayar1 + "\nAyar2: " + (ayar2 ? "Aktif" : "Pasif"));
 }
 </script>
+<script>
+function gizleTumFormlar() {
+  ['kayitFormu', 'listeFormu', 'personelFormu', 'cariFormu', 'raporFormu', 'ayarlarFormu'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+}
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btnPersonel")?.addEventListener("click", () => {
+    gizleTumFormlar();
+    document.getElementById("personelFormu").style.display = "block";
+  });
 
+  document.getElementById("btnCari")?.addEventListener("click", () => {
+    gizleTumFormlar();
+    document.getElementById("cariFormu").style.display = "block";
+  });
+
+  document.getElementById("btnYeniArac")?.addEventListener("click", () => {
+    gizleTumFormlar();
+    resetForm();
+    document.getElementById("kayitFormu").style.display = "block";
+    guncelleToplamOdeme();
+  });
+
+  document.getElementById("btnListe")?.addEventListener("click", () => {
+  gosterSadeceListe();
+    gizleTumFormlar();
+    document.getElementById("listeFormu").style.display = "block";
+    listeleKayitlar();
+  });
+
+  document.getElementById("btnRapor")?.addEventListener("click", () => {
+    gizleTumFormlar();
+    document.getElementById("raporFormu").style.display = "block";
+    olusturHakedişRaporu();
+  });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.querySelector("#ayarlarFormu #btnPersonel");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      gizleTumFormlar();
+      document.getElementById("personelFormu").style.display = "block";
+    });
+  }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btnCari = document.querySelector("#ayarlarFormu #btnCari");
+  if (btnCari && !btnCari.dataset.listenerAdded) {
+    btnCari.addEventListener("click", () => {
+      gizleTumFormlar();
+      document.getElementById("cariFormu").style.display = "block";
+    });
+    btnCari.dataset.listenerAdded = "true";
+  }
+
+  const btnSifirla = document.querySelector("#ayarlarFormu #btnSifirlaDB");
+  if (btnSifirla && !btnSifirla.dataset.listenerAdded) {
+    btnSifirla.addEventListener("click", () => {
+      sifirlaDatabase();
+    });
+    btnSifirla.dataset.listenerAdded = "true";
+  }
+});
+</script>
 </body>
 </html>
