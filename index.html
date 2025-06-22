@@ -6,12 +6,36 @@
 <title>GopCarWash</title>
 <style>
     body { font-family: Arial; padding: 20px; }
-    #kayitFormu { display: none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: #fefefe; }
+    #kayitFormu { display: none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #fefefe; }
     .toggle-button { padding: 5px 10px; margin: 5px; border: 1px solid #999; cursor: pointer; display: inline-block; }
     .toggle-button.active { background-color: green; color: white; }
-    #toplamOdeme { background: lightgreen; padding: 10px; margin-top: 10px; font-weight: bold; display: inline-block; }
+    #toplamOdeme { background: lightgreen; padding: 10px; margin-top: 4px; font-weight: bold; display: inline-block; }
     .iptal-kayit { text-decoration: line-through; color: red; }
-  </style>
+  
+
+/* Ana menü butonlarını yatayda ortala */
+#menuContainer, .menu-buttons, .ana-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center !important;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Mobilde dikey dizilim */
+@media (max-width: 600px) {
+    #menuContainer, .menu-buttons, .ana-menu {
+        flex-direction: column;
+        align-items: center !important;
+    }
+    button {
+        width: 90%;
+        max-width: 300px;
+        margin: 0.2rem auto;
+    }
+}
+.eksik-odeme-kayit { background-color: #ffe680; }  /* turuncu */
+</style>
 <style>
   body {
     font-family: Arial;
@@ -57,8 +81,8 @@
 </style></head>
 <body>
 <style>
-.odenmis-kayit { background-color: #e0f7ff; }  /* açık mavi */
-.odenmemis-kayit { background-color: #ffe0e6; }  /* açık pembe */
+.odenmis-kayit { background-color: #ccffcc; }  /* yeşil */  /* açık mavi */
+.odenmemis-kayit { background-color: #ffcccc; }  /* açık pembe */  /* açık pembe */
 </style>
 <style>
 .menu-button {
@@ -89,37 +113,55 @@
 <button class="menu-button" id="btnYeniArac" title="Yeni Araç">🚗</button>
 <button class="menu-button" id="btnRapor" title="Rapor">📊</button>
 <button class="menu-button" id="btnAyarlar" title="Ayarlar">⚙️</button>
-<div id="kayitFormu" style="background: #ffe6e6; display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0;">
-<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><h2>Araç Kayıt Formu</h2><div id="toplamOdeme" style=" padding-left: 40px; float: right; margin-right: 40px">Toplam Ödeme: 0 ₺</div></div><div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px;"><label>Plaka No: <input id="plaka" type="text"/></label><label>Açıklama: <input id="aciklama" type="text"/></label></div><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;"><label>Ana İşlem: 
-      <select id="anaIslem" onchange="guncelleToplamOdeme()">
+<div id="kayitFormu" style="max-width:650px; margin:0 auto; background: #ffe6e6; display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0;">
+<div style="display: flex; align-items: center; gap: 100px;"><h2>Araç Kayıt Formu</h2><div id="toplamOdeme" style=" padding-left: 40px; float: right; margin-right: 40px">Toplam Ödeme: 0 ₺</div></div><div style="display: flex; gap: 10px; flex-wrap: wrap;"><label>🚗 <input id="plaka" placeholder="Plaka No" style="width: 120px;" type="text"/></label><label>💬 <input id="aciklama" placeholder="Açıklama" style="width: 200px;" type="text"/></label></div><div style="display: block; margin-top: 4px;"><label>🚿 <select id="anaIslem" onchange="guncelleToplamOdeme()" style="width: 100px;">
 <option>İÇDIŞ</option><option>DIŞ</option><option>B.İÇDIŞ</option>
 <option>B.DIŞ</option><option>M.İÇDIŞ</option><option>M.DIŞ</option><option>MOTOR</option>
 </select>
-</label><label>Yıkayan Personel: <select id="personel"><option>Seçiniz</option></select></label><label>Ödeme Tipi: 
-      <select id="odemeTipi">
+</label><label>👨‍🔧 <select id="personel" style="width: 100px;"><option>Seçiniz</option></select></label>
+<div style="display: block; margin-top: 4px;">
+</div>
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 4px;"><label>💰 <select id="odemeTipi" style="width: 100px;">
 <option>Seçiniz</option><option>nakit</option><option>kredi kartı</option><option>vadeli</option>
 </select>
-</label><label>Cari: <select id="cari"><option>Bireysel</option></select></label></div><div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; align-items: center;"><span style="margin-right: 10px; font-weight: bold;">Ekstralar:</span><div class="toggle-button" data-value="OZON" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">OZON</div><div class="toggle-button" data-value="CİLA" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">CİLA</div><div class="toggle-button" data-value="BUHAR" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">BUHAR</div><div class="toggle-button" data-value="DETAY1" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">DETAY1</div><div class="toggle-button" data-value="DETAY2" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">DETAY2</div><div class="toggle-button" data-value="PASTACİLA" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 80px; margin: 2px; text-align: center;">PASTACİLA</div></div><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;"></div><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;"><label>Ücret Farkı: <input id="ucretFarki" onchange="guncelleToplamOdeme()" type="number" value="0"/></label><label>Harici Ücret: <input id="hariciUcret" onchange="guncelleToplamOdeme()" type="number" value="0"/></label></div>
-<div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"></div><div style="display: flex; gap: 6px; margin-top: 8px; justify-content: flex-start;"><button class="menu-button" id="btnKaydet" style="min-width: 70px; font-size: 12px; padding: 4px;">💾</button><button class="menu-button" id="btnSil" style="min-width: 70px; font-size: 12px; padding: 4px;">🗑️</button><button class="menu-button" id="btnVazgec" style="min-width: 70px; font-size: 12px; padding: 4px;">❌</button></div></div><div style="display: flex; gap: 6px; margin-top: 6px; justify-content: flex-start;"></div>
+</label><label>Nakit ₺: <input id="nakitOdeme" style="width: 80px;" type="number" value="0"/></label><label>K.Kart ₺: <input id="krediKartOdeme" style="width: 80px;" type="number" value="0"/></label><label>Vadeli ₺: <input id="vadeliOdeme" style="width: 80px;" type="number" value="0"/></label></div><label>🏢 <select id="cari" style="width: 100px;"><option>Bireysel</option></select></label>
+<div style="display: block; margin-top: 4px;">
+</div>
+</div><div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 2px; align-items: center;"><span style="margin-right: 10px; font-weight: bold;">Ekstralar:</span><div class="toggle-button" data-value="OZON" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 50px; margin: 2px; text-align: center;">OZON</div><div class="toggle-button" data-value="CİLA" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 50px; margin: 2px; text-align: center;">CİLA</div><div class="toggle-button" data-value="BUHAR" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 50px; margin: 2px; text-align: center;">BUHAR</div><div class="toggle-button" data-value="DETAY1" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">DETAY1</div><div class="toggle-button" data-value="DETAY2" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 60px; margin: 2px; text-align: center;">DETAY2</div><div class="toggle-button" data-value="PASTACİLA" onmouseup="toggleEkstra(this)" style="display: inline-block; width: 80px; margin: 2px; text-align: center;">PASTACİLA</div></div><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 2px;"></div><div style="margin-top: 6px;">
+<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px;"><label>Ücret Farkı: <input id="ucretFarki" onchange="guncelleToplamOdeme()" style="width: 80px;" type="number" value="0"/></label><label>Harici Ücret: <input id="hariciUcret" onchange="guncelleToplamOdeme()" style="width: 80px;" type="number" value="0"/></label></div>
+</div>
+<div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"></div><div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"><button class="menu-button" id="btnKaydet" style="min-width: 70px; font-size: 12px; padding: 4px;">💾</button><button class="menu-button" id="btnSil" style="min-width: 70px; font-size: 12px; padding: 4px;">🗑️</button><button class="menu-button" id="btnVazgec" style="min-width: 70px; font-size: 12px; padding: 4px;">❌</button></div></div><div style="display: flex; gap: 6px; margin-top: 6px; justify-content: flex-start;"></div>
 <div id="listeFormu">
 <div id="listeAlani"><div style="background: #e6f0ff; margin-bottom: 10px;">
 <div style="display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; margin-bottom: 10px;">
 <label style="display: flex; align-items: center; gap: 4px;">⏰ <input id="filterStartDate" type="date" value=""/></label>
 <label style="display: flex; align-items: center; gap: 4px;">🏁 <input id="filterEndDate" type="date" value=""/></label>
-<label style="display: flex; align-items: center; gap: 4px;">Plaka No: <input id="filterPlaka" placeholder="Plaka No" style="width: 80px;" type="text"/></label>
-<label style="display: flex; align-items: center; gap: 4px;">Personel: <input id="filterPersonel" placeholder="Personel Adı" style="width: 80px;" type="text"/></label>
+<label style="display: flex; align-items: center; gap: 4px;">🚗 <input id="filterPlaka" placeholder="Plaka No" style="width: 80px;" type="text"/></label>
+<label style="display: flex; align-items: center; gap: 4px;">👨‍🔧 <input id="filterPersonel" placeholder="Personel Adı" style="width: 80px;" type="text"/></label>
 <span class="toggle-button active" id="filterOdenmis" onclick="this.classList.toggle('active')" title="Ödenmişler">💰</span>
-<span class="toggle-button active" id="filterOdenmemis" onclick="this.classList.toggle('active')" title="Ödenmemişler">💰Vazgeç</span>
+<span class="toggle-button active" id="filterOdenmemis" onclick="this.classList.toggle('active')" title="Ödenmemişler">💰 ✖</span>
 <button class="menu-button" id="filterBtn" onclick="filtreleKayitlar()" title="Filtrele">🔍</button>
-<button class="menu-button" id="clearBtn" onclick="listeleKayitlar()" title="Temizle">Vazgeç</button>
+<button class="menu-button" id="clearBtn" onclick="listeleKayitlar()" title="Temizle">✖</button>
 </div>
 <script>
 
-function gizleRaporFormu() {
-  document.getElementById("raporFormu").style.display = "none";
-}
 
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("input", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   gizleRaporFormu();
     gosterSadeceListe();
   const today = new Date().toISOString().slice(0, 10);
@@ -192,14 +234,33 @@ function gosterSadeceCari() {
 </div>
 </div>
 <script>
-
-function gizleRaporFormu() {
-  document.getElementById("raporFormu").style.display = "none";
-}
+const ekstraKisaltmalar = {
+  "OZON": "O",
+  "CİLA": "C",
+  "BUHAR": "B",
+  "DETAY1": "D1",
+  "DETAY2": "D2",
+  "PASTACİLA": "P"
+};
 
 
 
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   gizleRaporFormu();
     gosterSadeceListe();
   const request = indexedDB.open("GopCarWash", 2);
@@ -322,7 +383,82 @@ function kaydetKayit() {
   }
 
   function devamEt(sn) {
-    const veri = {
+    
+  const toplamOdeme = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+  const nakit = parseFloat(document.getElementById("nakitOdeme").value || 0);
+  const kart = parseFloat(document.getElementById("krediKartOdeme").value || 0);
+  const vadeli = parseFloat(document.getElementById("vadeliOdeme").value || 0);
+  
+  if (parseFloat(document.getElementById("hariciUcret").value || 0) < 0) {
+    alert("Harici ücret negatif olamaz.");
+    return;
+  }
+
+  if (nakit < 0 || kart < 0 || vadeli < 0) {
+    alert("Ödeme tutarları negatif olamaz.");
+    return;
+  }
+const toplamOdemeGirilen = nakit + kart + vadeli;
+
+  // Otomatik ödeme tipi düzeltme
+  if (nakit === toplamOdeme && kart === 0 && vadeli === 0) {
+    document.getElementById("odemeTipi").value = "nakit";
+  } else if (kart === toplamOdeme && nakit === 0 && vadeli === 0) {
+    document.getElementById("odemeTipi").value = "kredi kartı";
+  } else if (vadeli === toplamOdeme && nakit === 0 && kart === 0) {
+    document.getElementById("odemeTipi").value = "vadeli";
+  }
+
+  // Eğer hiçbir ödeme girilmemişse ödeme tipini "Seçiniz" yap
+  if (nakit === 0 && kart === 0 && vadeli === 0) {
+    document.getElementById("odemeTipi").value = "Seçiniz";
+  }
+
+
+  if (parseFloat(document.getElementById("hariciUcret").value || 0) > 0 && toplamOdemeGirilen < toplamOdeme) {
+    alert("Harici ücret girildiği için eksik ödeme yapılamaz.");
+    return;
+  }
+
+  const cariVal = document.getElementById("cari").value;
+  const odemeVal = document.getElementById("odemeTipi").value;
+
+  if (cariVal === "Bireysel" && vadeli > 0) {
+    alert("Bireysel müşteride vadeli ödeme girilemez.");
+    return;
+  }
+
+  if (cariVal !== "Bireysel" && (nakit > 0 || kart > 0)) {
+    alert("Cari müşteride sadece vadeli ödeme olabilir.");
+    return;
+  }
+
+  if (nakit === 0 && kart === 0 && vadeli === 0) {
+} else if (toplamOdemeGirilen < toplamOdeme) {
+  if (cariVal !== "Bireysel" || odemeVal === "vadeli") {
+    alert("Cari veya vadeli ödemelerde eksik ödeme kabul edilemez.");
+    return;
+  }
+    // devam et
+  } else if (toplamOdemeGirilen < toplamOdeme) {
+    if (!confirm("Girilen ödeme toplamı, toplam ücretten düşük. Yine de kaydetmek istiyor musunuz?")) return;
+  } else if (toplamOdemeGirilen > toplamOdeme) {
+    const tipler = [nakit > 0, kart > 0, vadeli > 0].filter(Boolean).length;
+    if (tipler === 1) {
+      // Sadece bir ödeme tipi varsa fazla kısmı azalt
+      if (nakit > 0) document.getElementById("nakitOdeme").value = toplamOdeme;
+      if (kart > 0) document.getElementById("krediKartOdeme").value = toplamOdeme;
+      if (vadeli > 0) document.getElementById("vadeliOdeme").value = toplamOdeme;
+    } else {
+      alert("Toplam ödeme, toplam ücretten fazla ve birden çok ödeme türü girilmiş. Lütfen düzeltin.");
+      return;
+    }
+  }
+
+  const veri = {
+    nakitOdeme: parseFloat(document.getElementById("nakitOdeme").value || 0),
+    krediKartOdeme: parseFloat(document.getElementById("krediKartOdeme").value || 0),
+    vadeliOdeme: parseFloat(document.getElementById("vadeliOdeme").value || 0),
       id,
       sirano: sn,
       plaka: document.getElementById("plaka").value,
@@ -378,6 +514,26 @@ function silKayit(id) {
   };
 }
 
+
+function detayliOdemeTipi(d) {
+  const nakit = d.nakitOdeme || 0;
+  const kart = d.krediKartOdeme || 0;
+  const vadeli = d.vadeliOdeme || 0;
+  const toplam = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
+  const toplamGirilen = nakit + kart + vadeli;
+
+  if (toplamGirilen === 0) return "---";
+  if (toplamGirilen < toplam) return "Eksik Ödeme";
+
+  const tipler = [];
+  if (nakit > 0) tipler.push("Nakit");
+  if (kart > 0) tipler.push("Kart");
+  if (vadeli > 0) tipler.push("Vadeli");
+
+  return tipler.join("+");
+}
+
+
 function listeleKayitlar() {
   const tx = db.transaction("kayitlar", "readonly");
   tx.objectStore("kayitlar").getAll().onsuccess = function(e) {
@@ -392,13 +548,19 @@ function listeleKayitlar() {
       if (d.cancelled) tr.classList.add("iptal-kayit");
       let sinif = "";
       const odeme = d.odemeTipi?.toLowerCase();
-      if (odeme && odeme !== "seçiniz") sinif = "odenmis-kayit";
-      else sinif = "odenmemis-kayit";
+      const nakit = d.nakitOdeme || 0;
+      const kart = d.krediKartOdeme || 0;
+      const vadeli = d.vadeliOdeme || 0;
+      const toplam = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
+      const girilen = nakit + kart + vadeli;
+      if (girilen === 0) sinif = "odenmemis-kayit";
+      else if (girilen < toplam) sinif = "eksik-odeme-kayit";
+      else sinif = "odenmis-kayit";
       if (d.cancelled) sinif = "iptal-kayit";
       tr.className = sinif;
-      tr.innerHTML = `<td>${d.sirano}</td><td>${d.plaka}</td><td>${d.anaIslem}</td><td>${d.ekstra.join(", ")}</td>
-        <td>${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td><td>${d.cari}</td>
-        <td>${d.personel}</td><td>${d.odemeTipi}</td>
+      tr.innerHTML = `<td>${d.sirano}</td><td style="text-align:right;">${d.plaka}</td><td style="text-align:right;">${d.anaIslem}</td><td style="text-align:right;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
+        <td>${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td><td style="text-align:right;">${d.cari}</td>
+        <td>${d.personel}</td><td style="text-align:right;">${detayliOdemeTipi(d)}</td>
         <td>${d.kayitZamani}</td>`;
       tr.onclick = () => formuDoldur(d);
       tbody.appendChild(tr);
@@ -417,11 +579,16 @@ function formuDoldur(d) {
   document.getElementById("odemeTipi").value = d.odemeTipi;
   document.getElementById("ucretFarki").value = d.ucretFarki;
   document.getElementById("hariciUcret").value = d.hariciUcret;
+  document.getElementById("nakitOdeme").value = d.nakitOdeme || 0;
+  document.getElementById("krediKartOdeme").value = d.krediKartOdeme || 0;
+  document.getElementById("vadeliOdeme").value = d.vadeliOdeme || 0;
+
   document.querySelectorAll(".toggle-button").forEach(b => {
     b.classList.toggle("active", d.ekstra.includes(b.dataset.value));
   });
   guncelleToplamOdeme();
   f.style.display = "block";
+  document.getElementById("listeFormu").style.display = "none";
 }
 
 
@@ -463,13 +630,19 @@ function filtreleKayitlar() {
       if (d.cancelled) tr.classList.add("iptal-kayit");
       let sinif = "";
       const odeme = d.odemeTipi?.toLowerCase();
-      if (odeme && odeme !== "seçiniz") sinif = "odenmis-kayit";
-      else sinif = "odenmemis-kayit";
+      const nakit = d.nakitOdeme || 0;
+      const kart = d.krediKartOdeme || 0;
+      const vadeli = d.vadeliOdeme || 0;
+      const toplam = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
+      const girilen = nakit + kart + vadeli;
+      if (girilen === 0) sinif = "odenmemis-kayit";
+      else if (girilen < toplam) sinif = "eksik-odeme-kayit";
+      else sinif = "odenmis-kayit";
       if (d.cancelled) sinif = "iptal-kayit";
       tr.className = sinif;
-      tr.innerHTML = `<td>${d.sirano}</td><td>${d.plaka}</td><td>${d.anaIslem}</td><td>${d.ekstra.join(", ")}</td>
-        <td>${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td><td>${d.cari}</td>
-        <td>${d.personel}</td><td>${d.odemeTipi}</td>
+      tr.innerHTML = `<td>${d.sirano}</td><td style="text-align:right;">${d.plaka}</td><td style="text-align:right;">${d.anaIslem}</td><td style="text-align:right;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
+        <td>${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td><td style="text-align:right;">${d.cari}</td>
+        <td>${d.personel}</td><td style="text-align:right;">${detayliOdemeTipi(d)}</td>
         <td>${d.kayitZamani}</td>`;
       tr.onclick = () => formuDoldur(d);
       tbody.appendChild(tr);
@@ -479,7 +652,7 @@ function filtreleKayitlar() {
 
 
 </script>
-<div id="personelFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: #eef;">
+<div id="personelFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #eef;">
 <h2>Personel Listesi</h2>
 <div id="personelKutulari" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
 <!-- JavaScript ile doldurulacak -->
@@ -487,7 +660,7 @@ function filtreleKayitlar() {
 <br/>
 <button onclick="aktarPersonelComboboxa()">Kayıt Formuna Aktar</button>
 </div>
-<div id="cariFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: #ffe;">
+<div id="cariFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #ffe;">
 <h2>Cari Listesi</h2>
 <div id="cariKutulari" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
 <!-- JavaScript ile doldurulacak -->
@@ -495,20 +668,32 @@ function filtreleKayitlar() {
 <br/>
 <button onclick="aktarCariComboboxa()">Kayıt Formuna Aktar</button>
 </div>
-<div id="raporFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: #ddf;">
+<div id="raporFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #ddf; max-width:680px; margin-left:auto; margin-right:auto;">
 <h2>Personel Hakediş Raporu</h2>
 <label>Rapor Tarihi:
-    <input id="raporTarihi" type="date" value="2025-06-21"/>
+    <input id="raporTarihi" type="date" value="2025-06-22"/>
 </label>
-<div id="raporTabloAlani" style="margin-top: 20px;"></div>
+<div id="raporTabloAlani" style="margin-top: 6px; max-width:680px; margin-left:auto; margin-right:auto;"></div>
 </div>
 <script>
 
-function gizleRaporFormu() {
-  document.getElementById("raporFormu").style.display = "none";
-}
 
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   const kutuAlan = document.getElementById("personelKutulari");
   if (kutuAlan) {
     for (let i = 1; i <= 30; i++) {
@@ -521,33 +706,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-function aktarPersonelComboboxa() {
-  const personelCombo = document.getElementById("personel");
-  while (personelCombo.options.length > 1) {
-    personelCombo.remove(1);
-  }
-
-  const tx = db.transaction("Personeller", "readwrite");
-  const store = tx.objectStore("Personeller");
-
-  for (let i = 1; i <= 30; i++) {
-    const val = document.getElementById("p" + i).value.trim();
-    const yemek = document.getElementById("yemek" + i)?.checked || false;
-    if (val) {
-      store.put({ id: "p" + i, ad: val, yemekUcreti: yemek });
-
-      const opt = document.createElement("option");
-      opt.value = val;
-      opt.text = val;
-      personelCombo.appendChild(opt);
-    }
-  }
-
-  alert("Personel listesi ve veritabanı güncellendi.");
-  doldurPersonelFormu(); // Veritabanından geri yükleme
-}
 
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   const cariAlan = document.getElementById("cariKutulari");
   if (cariAlan) {
     for (let i = 1; i <= 30; i++) {
@@ -771,6 +946,12 @@ function doldurCariFormu() {
 }
 </script>
 <script>
+
+function yuvarla5Uzeri(tutar) {
+  return Math.ceil(tutar / 5) * 5;
+}
+
+
 function olusturHakedişRaporu() {
   const seciliTarih = document.getElementById("raporTarihi").value;
   const tx = db.transaction(["kayitlar", "Personeller"], "readonly");
@@ -816,16 +997,16 @@ function olusturHakedişRaporu() {
     });
 
     let html = `
-      <table border="1" cellpadding="5" cellspacing="0">
+      <table border="1" cellpadding="5" cellspacing="0" style="width:100%; max-width:680px;">
         <tr>
-          <th>Personel</th><th>Adet</th><th>Toplam</th><th>Yemek</th><th>%25 Hakediş</th><th>Yemek Ücreti</th><th>Genel Toplam</th>
+          <th>Personel</th><th style="text-align:right;">Adet</th><th style="text-align:right;">Toplam</th><th>Yemek</th><th style="text-align:right;">%25 Hakediş</th><th style="text-align:right;">Yemek Ücreti</th><th style="text-align:right;">Genel Toplam</th>
         </tr>
     `;
 
     let genelAdet = 0, genelToplam = 0, genelHakediş = 0, genelYemek = 0;
 
     Object.entries(ozet).forEach(([ad, v]) => {
-      const hak = v.toplam * 0.25;
+      const hak = yuvarla5Uzeri(v.toplam * 0.25);
       const yemek = v.yemek ? 130 : 0;
       const toplam = hak + yemek;
       genelAdet += v.adet;
@@ -835,16 +1016,16 @@ function olusturHakedişRaporu() {
 
       html += `
         <tr>
-          <td>${ad}</td><td>${v.adet}</td><td>${v.toplam}</td><td>${v.yemek ? "✔️" : "-"}</td>
-          <td>${hak.toFixed(0)}</td><td>${yemek}</td><td>${toplam.toFixed(0)}</td>
+          <td>${ad}</td><td style="text-align:right;">${v.adet}</td><td style="text-align:right;">${v.toplam}</td><td style="text-align:right;">${v.yemek ? "✔️" : "-"}</td>
+          <td style="text-align:right;">${hak.toFixed(0)}</td><td style="text-align:right;">${yemek}</td><td style="text-align:right;">${toplam.toFixed(0)}</td>
         </tr>
       `;
     });
 
     html += `
       <tr style="font-weight:bold; background:#dfd;">
-        <td>TOPLAM</td><td>${genelAdet}</td><td>${genelToplam}</td><td>-</td>
-        <td>${genelHakediş.toFixed(0)}</td><td>${genelYemek}</td><td>${(genelHakediş + genelYemek).toFixed(0)}</td>
+        <td>TOPLAM</td><td style="text-align:right;">${genelAdet}</td><td style="text-align:right;">${genelToplam}</td><td style="text-align:right;">-</td>
+        <td>${genelHakediş.toFixed(0)}</td><td style="text-align:right;">${genelYemek}</td><td style="text-align:right;">${(genelHakediş + genelYemek).toFixed(0)}</td>
       </tr>
     `;
 
@@ -855,6 +1036,21 @@ function olusturHakedişRaporu() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   const input = document.getElementById("raporTarihi");
   if (input) {
     input.addEventListener("change", olusturHakedişRaporu);
@@ -862,39 +1058,43 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script>
+
 function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, seciliTarih) {
-  let kalanNakit = 0;
+  
+  let cariAdet = gunlukKayitlar.filter(k => (k.vadeliOdeme || 0) > 0).length;
+
   let toplamNakit = 0;
+  let toplamKart = 0;
+  let toplamVadeli = 0;
   let toplamHarici = 0;
-  let krediKartToplam = 0;
-  let krediKartAdet = 0;
-  let cariToplam = 0;
   let odememisToplam = 0;
   let toplamCiro = 0;
 
   gunlukKayitlar.forEach(k => {
-    const odeme = k.odemeTipi?.toLowerCase();
+    const nakit = k.nakitOdeme || 0;
+    const kart = k.krediKartOdeme || 0;
+    const vadeli = k.vadeliOdeme || 0;
     const harici = k.hariciUcret || 0;
+
     const toplam = parseFloat((k.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
+    const toplamGirilen = nakit + kart + vadeli;
 
-    const ciroKalem = toplam - harici;
-    toplamCiro += ciroKalem;
+    // Nakitten harici düşülür
+    toplamNakit += nakit;
+    toplamKart += kart;
+    toplamVadeli += vadeli;
+    toplamHarici += harici;
 
-    if (odeme === "nakit") {
-      toplamNakit += toplam;
-      toplamHarici += harici;
-    } else if (odeme === "kredi kartı") {
-      krediKartToplam += toplam;
-      krediKartAdet += 1;
-      toplamHarici += harici;
-    } else if (odeme === "vadeli") {
-      cariToplam += toplam;
-    } else {
-      odememisToplam += toplam;
+    // Eksik ödeme varsa ödenmemiş olarak eklenir
+    if (toplamGirilen < toplam) {
+      odememisToplam += (toplam - toplamGirilen);
     }
+
+    // Ciro = toplam - harici
+    toplamCiro += (toplam - harici);
   });
 
-  kalanNakit = toplamNakit - toplamHarici - personelHakToplami;
+  toplamNakit -= (toplamHarici + personelHakToplami); // Harici nakitten düşülür
 
   // Silinmiş kayıtları bul
   const silinmisAdet = tumKayitlar.filter(k => {
@@ -907,31 +1107,77 @@ function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, sec
   let html = `
     <h3>Günsonu Özeti</h3>
     <table border="1" cellpadding="5" cellspacing="0">
-      <tr><td>1) Personel Hakediş Genel Toplamı</td><td>${personelHakToplami.toFixed(0)} ₺</td></tr>
-      <tr><td>2) Kalan Nakit</td><td>${kalanNakit.toFixed(0)} ₺</td></tr>
-      <tr><td>3) Kredi Kartı (${krediKartAdet} işlem)</td><td>${krediKartToplam.toFixed(0)} ₺</td></tr>
-      <tr><td>4) Cari Ödemeler (Vadeli)</td><td>${cariToplam.toFixed(0)} ₺</td></tr>
-      <tr><td>5) Ödenmemişler</td><td>${odememisToplam.toFixed(0)} ₺</td></tr>
-      <tr><td>6) Toplam Ciro (Harici ücretler hariç)</td><td>${toplamCiro.toFixed(0)} ₺</td></tr>
-      <tr><td colspan="2" style="font-style: italic;">Not: Alınan toplam harici ücret = ${toplamHarici.toFixed(0)} ₺</td></tr>
-      <tr><td colspan="2" style="font-style: italic;">Not: Bugün ${silinmisAdet} kayıt silinmiş.</td></tr>
+      
+      <tr><td>1) Personel Hakediş Genel Toplamı</td><td style="text-align:right;">${personelHakToplami.toFixed(0)} ₺</td></tr>
+      <tr><td>2) Nakit</td><td style="text-align:right;">${toplamNakit.toFixed(0)} ₺</td></tr>
+      <tr><td>3) Kredi Kartı</td><td style="text-align:right;">${toplamKart.toFixed(0)} ₺</td></tr>
+      <tr><td>4) Cari Ödemeler <span style="font-size:smaller;">(Adet: ${cariAdet})</span></td><td style="text-align:right;">${toplamVadeli.toFixed(0)} ₺</td></tr>
+      <tr><td>5) Ödenmemişler</td><td style="text-align:right;">${odememisToplam.toFixed(0)} ₺</td></tr>
+      <tr><td>6) Toplam Ciro</td><td style="text-align:right;">${toplamCiro.toFixed(0)} ₺</td></tr>
+      <tr><td colspan="2" style="font-style: italic;"><span style="color:red;">Not: Alınan toplam harici ücret = ${toplamHarici.toFixed(0)} ₺</span></td></tr>
+      <tr><td colspan="2" style="font-style: italic; color:red;">Not: Bugün ${silinmisAdet} kayıt silinmiş.</td></tr>
     </table>
   `;
 
   const container = document.createElement("div");
   container.innerHTML = html;
+  
+  // Cari bazlı vadeli ödemeler
+  const cariOzet = {};
+  gunlukKayitlar.forEach(k => {
+    if ((k.vadeliOdeme || 0) > 0 && !k.cancelled) {
+      const cari = k.cari || "Belirtilmemiş";
+      if (!cariOzet[cari]) cariOzet[cari] = { adet: 0, toplam: 0 };
+      cariOzet[cari].adet++;
+      cariOzet[cari].toplam += k.vadeliOdeme;
+    }
+  });
+
+  let cariTable = "";
+  if (Object.keys(cariOzet).length > 0) {
+    cariTable += "<h3>Cari Bazlı Vadeli Ödemeler</h3><table border='1' cellpadding='5' cellspacing='0' style='width:100%; max-width:680px;'>";
+    cariTable += "<tr><th>Cari</th><th>Adet</th><th style='text-align:right;'>Vadeli Tutar</th></tr>";
+    for (const [cari, data] of Object.entries(cariOzet)) {
+      cariTable += `<tr><td>${cari}</td><td style="text-align:right;">${data.adet}</td><td style="text-align:right;">${data.toplam.toFixed(0)} ₺</td></tr>`;
+    }
+    cariTable += "</table>";
+  }
+
   document.getElementById("raporTabloAlani").appendChild(container);
-}</script>
+  if (cariTable) document.getElementById("raporTabloAlani").innerHTML += cariTable;
+}
+</script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   const cariSelect = document.getElementById("cari");
   const odemeTipiSelect = document.getElementById("odemeTipi");
 
-  cariSelect.addEventListener("change", () => {
+  function cariDegisimKontrol() {
     if (cariSelect.value !== "Bireysel") {
       odemeTipiSelect.value = "vadeli";
+      const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+      document.getElementById("nakitOdeme").value = 0;
+      document.getElementById("krediKartOdeme").value = 0;
+      document.getElementById("vadeliOdeme").value = toplam;
     }
-  });
+  }
+  cariSelect.addEventListener("change", cariDegisimKontrol);
+  cariSelect.addEventListener("click", cariDegisimKontrol);
 });</script>
 <script>
 function kontrolEtGiris() {
@@ -947,14 +1193,44 @@ function kontrolEtGiris() {
 
 // Bütün butonlara bunu entegre et
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
 
 
 
 
 });</script>
-<div id="ayarlarFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; background: #f9f9f9;"><h2>Ayarlar</h2><button id="btnPersonel">Personel Listesi</button><button id="btnCari">Cari Listesi</button><button id="btnSifirlaDB">Tüm Kayıtları Sil</button></div>
+<div id="ayarlarFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #f9f9f9;"><h2>Ayarlar</h2><button id="btnPersonel">Personel Listesi</button><button id="btnCari">Cari Listesi</button><button id="btnSifirlaDB">Tüm Kayıtları Sil</button></div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   document.getElementById("btnAyarlar").addEventListener("click", () => {
     gizleTumFormlar();
     document.getElementById("ayarlarFormu").style.display = "block";
@@ -977,6 +1253,21 @@ function gizleTumFormlar() {
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   document.getElementById("btnPersonel")?.addEventListener("click", () => {
     gizleTumFormlar();
     document.getElementById("personelFormu").style.display = "block";
@@ -1010,6 +1301,21 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   const btn = document.querySelector("#ayarlarFormu #btnPersonel");
   if (btn) {
     btn.addEventListener("click", () => {
@@ -1021,6 +1327,21 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("odemeTipi").addEventListener("change", () => {
+  const tip = document.getElementById("odemeTipi").value;
+  const toplam = parseFloat(document.getElementById("toplamOdeme").innerText.replace(/[^\d.]/g, "")) || 0;
+
+  const nakit = document.getElementById("nakitOdeme");
+  const kart = document.getElementById("krediKartOdeme");
+  const vadeli = document.getElementById("vadeliOdeme");
+
+  nakit.value = kart.value = vadeli.value = 0;
+
+  if (tip === "nakit") nakit.value = toplam;
+  if (tip === "kredi kartı") kart.value = toplam;
+  if (tip === "vadeli") vadeli.value = toplam;
+});
+
   const btnCari = document.querySelector("#ayarlarFormu #btnCari");
   if (btnCari && !btnCari.dataset.listenerAdded) {
     btnCari.addEventListener("click", () => {
