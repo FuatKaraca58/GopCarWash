@@ -20,21 +20,22 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   overflow-x: hidden;
   box-sizing: border-box;
 }
 
+
 #kayitFormu {
   display: none;
-  position: fixed;
+  position: absolute; /* veya relative */
   top: 0;
-  left: 5px;               
-  width: calc(100vw - 5px);
-  height: 100vh;
+  left: 0;
+  width: 100%;
+  min-height: 100dvh;
   background: #fefefe;
-  padding: 10px 10px 10px 10px;
+  padding: 10px;
   box-sizing: border-box;
   overflow-y: auto;
   z-index: 9999;
@@ -169,6 +170,8 @@ th, td {
   gap: 4px;
   padding: 10px;
   box-sizing: border-box;
+  max-height: calc(100vh - 80px); /* üst boşluğu dengele */
+  overflow-y: auto;
 ">
 <div style="display: flex; align-items: center; gap: 100px;"><h2>Araç Kayıt Formu</h2><div id="toplamOdeme" style=" padding-left: 40px; float: right; margin-right: 40px">Toplam Ödeme: 0 ₺</div></div><div style="display: flex; gap: 10px; flex-wrap: wrap;"><label>🚗 <input id="plaka" placeholder="Plaka No" style="width: 120px;" type="text"/></label><label>💬 <input id="aciklama" placeholder="Açıklama" style="width: 200px;" type="text"/></label></div><div style="display: block; margin-top: 4px;">
 
@@ -199,26 +202,26 @@ th, td {
 </div>
 <div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"></div><div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"><button class="menu-button" id="btnKaydet" style="min-width: 70px; font-size: 12px; padding: 4px;">💾</button><button class="menu-button" id="btnSil" style="min-width: 70px; font-size: 12px; padding: 4px;">🗑️</button><button class="menu-button" id="btnVazgec" style="min-width: 70px; font-size: 12px; padding: 4px;">❌</button></div></div><div style="display: flex; gap: 6px; margin-top: 6px; justify-content: flex-start;"></div>
 <div id="listeFormu">
-  <div id="listeAlani">
-    <div style="background: #e6f0ff; margin-bottom: 10px; padding: 10px;">
+<div id="listeAlani">
+  <div style="background: #e6f0ff; margin-bottom: 10px; padding: 10px;">
+    <!-- 1. SATIR -->
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px;">
+      <label style="display: flex; align-items: center; gap: 4px;">⏰ 
+        <input id="filterStartDate" type="date" value=""/>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px;">🚗 
+        <input id="filterPlaka" placeholder="Plaka No" style="width: 80px;" type="text"/>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px;">👨‍🔧 
+        <input id="filterPersonel" placeholder="Personel Adı" style="width: 80px;" type="text"/>
+      </label>
+      <label style="display: flex; align-items: center; gap: 4px;">🏢 
+        <input id="filterCariTipi" placeholder="Cari Adı" style="width: 80px;" type="text"/>
+      </label>
+    </div>
 
-      <!-- 1. SATIR -->
-      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px;">
-        <label style="display: flex; align-items: center; gap: 4px;">⏰ 
-          <input id="filterStartDate" type="date" value=""/>
-        </label>
-        <label style="display: flex; align-items: center; gap: 4px;">🚗 
-          <input id="filterPlaka" placeholder="Plaka No" style="width: 80px;" type="text"/>
-        </label>
-        <label style="display: flex; align-items: center; gap: 4px;">👨‍🔧 
-          <input id="filterPersonel" placeholder="Personel Adı" style="width: 80px;" type="text"/>
-        </label>
-        <label style="display: flex; align-items: center; gap: 4px;">🏢 
-          <input id="filterCariTipi" placeholder="Cari Adı" style="width: 80px;" type="text"/>
-        </label>
-      </div>
-
-      <!-- 2. SATIR -->
+    <!-- 2. SATIR -->
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between;">
       <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
         <label style="display: flex; align-items: center; gap: 4px;">🏁 
           <input id="filterEndDate" type="date" value=""/>
@@ -229,26 +232,29 @@ th, td {
         <button class="menu-button" id="clearBtn" onclick="temizleFiltreVeListele()" title="Temizle">✖</button>
       </div>
 
+      <!-- ✅ Özet Alanı -->
+      <div id="listeOzeti" style="font-weight: bold; text-align: right; color: #003366;"></div>
     </div>
+  </div>
 
-    <!-- Tablonun etrafına scroll için div eklendi -->
-    <div style="overflow-x: auto;">
-<table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
-  <thead>
-    <tr>
-      <th style="background-color: lightgreen; text-align: left;">Sıra No</th>
-      <th style="background-color: lightgreen; text-align: left;">Plaka</th>
-      <th style="background-color: lightgreen; text-align: left;">İşlem</th>
-      <th style="background-color: lightgreen; text-align: left;">Ekstra</th>
-      <th style="background-color: lightgreen; text-align: left;">Ücret</th>
-      <th style="background-color: lightgreen; text-align: left;">Cari</th>
-      <th style="background-color: lightgreen; text-align: left;">Personel</th>
-      <th style="background-color: lightgreen; text-align: left;">Ödeme</th>
-      <th style="background-color: lightgreen; text-align: left;">Kayıt Zamanı</th>
-    </tr>
-  </thead>
-  <tbody id="listeGovde"></tbody>
-</table>
+  <!-- Liste tablosu alanı -->
+  <div style="overflow-x: auto;">
+    <table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
+      <thead>
+        <tr>
+          <th style="background-color: lightgreen; text-align: left;">Sıra No</th>
+          <th style="background-color: lightgreen; text-align: left;">Plaka</th>
+          <th style="background-color: lightgreen; text-align: left;">İşlem</th>
+          <th style="background-color: lightgreen; text-align: left;">Ekstra</th>
+          <th style="background-color: lightgreen; text-align: left;">Ücret</th>
+          <th style="background-color: lightgreen; text-align: left;">Cari</th>
+          <th style="background-color: lightgreen; text-align: left;">Personel</th>
+          <th style="background-color: lightgreen; text-align: left;">Ödeme</th>
+          <th style="background-color: lightgreen; text-align: left;">Kayıt Zamanı</th>
+        </tr>
+      </thead>
+        <tbody id="listeGovde"></tbody>
+      </table>
     </div>
 
   </div>
@@ -276,9 +282,9 @@ th, td {
   top: 60px;
   left: 10px;
   width: 680px;
-height: auto;
-max-height: calc(100vh - 20px); 
-overflow-y: auto;
+  height: auto;
+  max-height: calc(100vh - 80px); /* DÜZENLENDİ */
+  overflow-y: auto;
   border: 1px solid #ccc;
   padding: 20px;
   background: #ddf;
@@ -869,41 +875,60 @@ function detayliOdemeTipi(d) {
 
 function listeleKayitlar() {
   const tx = db.transaction("kayitlar", "readonly");
-  tx.objectStore("kayitlar").getAll().onsuccess = function(e) {
+  tx.objectStore("kayitlar").getAll().onsuccess = function (e) {
     const tbody = document.getElementById("listeGovde");
     tbody.innerHTML = "";
-    
-    const todayStr = new Date().toLocaleDateString("tr-TR");
-    const filtered = e.target.result.filter(k => k.kayitZamani && k.kayitZamani.split(" ")[0] === todayStr);
-    filtered.sort((a, b) => b.sirano.localeCompare(a.sirano)).forEach(d => {
 
+    const kayitlar = e.target.result;
+
+    kayitlar.sort((a, b) => b.sirano.localeCompare(a.sirano)).forEach(d => {
       const tr = document.createElement("tr");
       const anaIslemIsim = fiyatlarCache.find(f => f.kod === d.anaIslem)?.isim || d.anaIslem;
-      if (d.cancelled) tr.classList.add("iptal-kayit");
+
       let sinif = "";
-      const odeme = d.odemeTipi?.toLowerCase();
       const nakit = d.nakitOdeme || 0;
       const kart = d.krediKartOdeme || 0;
       const vadeli = d.vadeliOdeme || 0;
       const toplam = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
       const girilen = nakit + kart + vadeli;
+
       if (girilen === 0) sinif = "odenmemis-kayit";
       else if (girilen < toplam) sinif = "eksik-odeme-kayit";
       else sinif = "odenmis-kayit";
       if (d.cancelled) sinif = "iptal-kayit";
+
       tr.className = sinif;
-      tr.innerHTML = `  <td style="text-align:left;">${d.sirano}</td>
-  <td style="text-align:left;">${d.plaka}</td>
-  <td style="text-align:left;">${anaIslemIsim}</td>
-  <td style="text-align:left;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
-  <td style="text-align:right;">${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td>
-  <td style="text-align:left;">${d.cari}</td>
-  <td style="text-align:left;">${d.personel}</td>
-  <td style="text-align:left;">${detayliOdemeTipi(d)}</td>
-  <td style="text-align:left;">${d.kayitZamani}</td>`;
+      tr.innerHTML = `
+        <td style="text-align:left;">${d.sirano}</td>
+        <td style="text-align:left;">${d.plaka}</td>
+        <td style="text-align:left;">${anaIslemIsim}</td>
+        <td style="text-align:left;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
+        <td style="text-align:right;">${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td>
+        <td style="text-align:left;">${d.cari}</td>
+        <td style="text-align:left;">${d.personel}</td>
+        <td style="text-align:left;">${detayliOdemeTipi(d)}</td>
+        <td style="text-align:left;">${d.kayitZamani}</td>
+      `;
       tr.onclick = () => formuDoldur(d);
       tbody.appendChild(tr);
     });
+
+    // ✅ Liste özeti (araç sayısı ve toplam ücret)
+    const toplamUcret = kayitlar.reduce((acc, d) => {
+      const t = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
+      return acc + t;
+    }, 0);
+    const aracSayisi = kayitlar.length;
+
+    const ozetDiv = document.getElementById("listeOzeti");
+    if (ozetDiv) {
+      ozetDiv.innerHTML = `
+        <div style="padding: 6px; font-weight: bold;">
+          Araç Sayısı: ${aracSayisi} <br/>
+          Toplam Ücret: ${toplamUcret.toLocaleString("tr-TR")} ₺
+        </div>
+      `;
+    }
   };
 }
 
@@ -937,7 +962,7 @@ function filtreleKayitlar() {
   const personel = document.getElementById("filterPersonel").value.toLowerCase();
   const cariTipi = document.getElementById("filterCariTipi").value.toLowerCase();
   
-const tx = db.transaction("kayitlar", "readonly");
+  const tx = db.transaction("kayitlar", "readonly");
   tx.objectStore("kayitlar").getAll().onsuccess = function(e) {
     const tbody = document.getElementById("listeGovde");
     tbody.innerHTML = "";
@@ -981,21 +1006,40 @@ const tx = db.transaction("kayitlar", "readonly");
 
       tr.className = sinif;
       tr.innerHTML = `
-          <td style="text-align:left;">${d.sirano}</td>
-  <td style="text-align:left;">${d.plaka}</td>
-  <td style="text-align:left;">${anaIslemIsim}</td>
-  <td style="text-align:left;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
-  <td style="text-align:right;">${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td>
-  <td style="text-align:left;">${d.cari}</td>
-  <td style="text-align:left;">${d.personel}</td>
-  <td style="text-align:left;">${detayliOdemeTipi(d)}</td>
-  <td style="text-align:left;">${d.kayitZamani}</td>
+        <td style="text-align:left;">${d.sirano}</td>
+        <td style="text-align:left;">${d.plaka}</td>
+        <td style="text-align:left;">${anaIslemIsim}</td>
+        <td style="text-align:left;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
+        <td style="text-align:right;">${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td>
+        <td style="text-align:left;">${d.cari}</td>
+        <td style="text-align:left;">${d.personel}</td>
+        <td style="text-align:left;">${detayliOdemeTipi(d)}</td>
+        <td style="text-align:left;">${d.kayitZamani}</td>
       `;
       tr.onclick = () => formuDoldur(d);
       tbody.appendChild(tr);
     });
+
+    // ✅ Liste özeti: Araç sayısı ve toplam ücret
+    const toplamUcret = filtered.reduce((acc, d) => {
+      const t = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
+      return acc + t;
+    }, 0);
+    const aracSayisi = filtered.length;
+
+    // Gösterilecek alan varsa yaz
+    const ozetDiv = document.getElementById("listeOzeti");
+    if (ozetDiv) {
+      ozetDiv.innerHTML = `
+        <div style="padding: 6px; font-weight: bold;">
+          Araç Sayısı: ${aracSayisi} <br/>
+          Toplam Ücret: ${toplamUcret.toLocaleString("tr-TR")} ₺
+        </div>
+      `;
+    }
   };
 }
+
 
 function temizleFiltreVeListele() {
   const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD formatı
@@ -1113,7 +1157,6 @@ function gosterSadeceRapor() {
 // Personel butonuna tıklanınca
 
 // Yeni Araç butonuna tıklanınca
-
 
 
 
@@ -1278,8 +1321,7 @@ const ozet = {};
 gunlukKayitlar.forEach(k => {
   const p = k.personel || "Personel Seçilmemiş";
 
-  // Ana işlem fiyatı: isim ile eşleşen A kodlu satır
-  const anaKayit = fiyatlarCache.find(f => f.kod.startsWith("A") && f.isim === k.anaIslem);
+  const anaKayit = fiyatlarCache.find(f => f.kod === k.anaIslem);
   const anaUcret = anaKayit ? anaKayit.tutar : 0;
 
   // Ekstra işlem toplamı: kodlarla eşleşen E kodlu satırlar
