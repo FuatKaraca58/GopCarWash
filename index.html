@@ -3,10 +3,51 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GopCarWash</title>
 <style>
     body { font-family: Arial; padding: 20px; }
-    #kayitFormu { display: none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #fefefe; }
+
+
+#listeFormu {
+  max-height: calc(100vh - 60px); /* üstteki menülere yer bırakır */
+  overflow-y: auto;
+  margin-top: 2px; /* liste yukarı çıkmasın */
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+#kayitFormu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 5px;               
+  width: calc(100vw - 5px);
+  height: 100vh;
+  background: #fefefe;
+  padding: 10px 10px 10px 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 9999;
+}
+
+#kayitFormu input,
+  #kayitFormu select,
+  #kayitFormu textarea {
+    width: 100%;
+    font-size: 16px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+  }
     .toggle-button { padding: 5px 10px; margin: 5px; border: 1px solid #999; cursor: pointer; display: inline-block; }
     .toggle-button.active { background-color: green; color: white; }
     #toplamOdeme { background: lightgreen; padding: 10px; margin-top: 4px; font-weight: bold; display: inline-block; }
@@ -51,11 +92,17 @@
     font-size: 16px;
   }
 
-  table {
-    width: 100%;
-    overflow-x: auto;
-    display: block;
-  }
+ table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
 
   .toggle-button {
     padding: 8px 12px;
@@ -113,7 +160,16 @@
 <button class="menu-button" id="btnYeniArac" title="Yeni Araç">🚗</button>
 <button class="menu-button" id="btnRapor" title="Rapor">📊</button>
 <button class="menu-button" id="btnAyarlar" title="Ayarlar">⚙️</button>
-<div id="kayitFormu" style="max-width:650px; margin:0 auto; background: #ffe6e6; display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0;">
+<div id="kayitFormu" style="
+  max-width: 650px;
+  margin: 60px auto 0 auto;
+  background: #ffe6e6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 10px;
+  box-sizing: border-box;
+">
 <div style="display: flex; align-items: center; gap: 100px;"><h2>Araç Kayıt Formu</h2><div id="toplamOdeme" style=" padding-left: 40px; float: right; margin-right: 40px">Toplam Ödeme: 0 ₺</div></div><div style="display: flex; gap: 10px; flex-wrap: wrap;"><label>🚗 <input id="plaka" placeholder="Plaka No" style="width: 120px;" type="text"/></label><label>💬 <input id="aciklama" placeholder="Açıklama" style="width: 200px;" type="text"/></label></div><div style="display: block; margin-top: 4px;">
 
 <label>🚿 
@@ -143,28 +199,59 @@
 </div>
 <div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"></div><div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"><button class="menu-button" id="btnKaydet" style="min-width: 70px; font-size: 12px; padding: 4px;">💾</button><button class="menu-button" id="btnSil" style="min-width: 70px; font-size: 12px; padding: 4px;">🗑️</button><button class="menu-button" id="btnVazgec" style="min-width: 70px; font-size: 12px; padding: 4px;">❌</button></div></div><div style="display: flex; gap: 6px; margin-top: 6px; justify-content: flex-start;"></div>
 <div id="listeFormu">
-<div id="listeAlani"><div style="background: #e6f0ff; margin-bottom: 10px;">
-<div style="display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; margin-bottom: 10px;">
-<label style="display: flex; align-items: center; gap: 4px;">⏰ <input id="filterStartDate" type="date" value=""/></label>
-<label style="display: flex; align-items: center; gap: 4px;">🏁 <input id="filterEndDate" type="date" value=""/></label>
-<label style="display: flex; align-items: center; gap: 4px;">🚗 <input id="filterPlaka" placeholder="Plaka No" style="width: 80px;" type="text"/></label>
-<label style="display: flex; align-items: center; gap: 4px;">👨‍🔧 <input id="filterPersonel" placeholder="Personel Adı" style="width: 80px;" type="text"/></label>
-<span class="toggle-button active" id="filterOdenmis" onclick="this.classList.toggle('active')" title="Ödenmişler">💰</span>
-<span class="toggle-button active" id="filterOdenmemis" onclick="this.classList.toggle('active')" title="Ödenmemişler">💰 ✖</span>
-<button class="menu-button" id="filterBtn" onclick="filtreleKayitlar()" title="Filtrele">🔍</button>
-<button class="menu-button" id="clearBtn" onclick="listeleKayitlar()" title="Temizle">✖</button>
-</div>
+  <div id="listeAlani">
+    <div style="background: #e6f0ff; margin-bottom: 10px; padding: 10px;">
 
-</div><table border="1" cellpadding="5" cellspacing="0">
-<thead>
-<tr>
-<th style="background-color: lightgreen;">Sıra No</th><th style="background-color: lightgreen;">Plaka</th><th style="background-color: lightgreen;">İşlem</th><th style="background-color: lightgreen;">Ekstra</th><th style="background-color: lightgreen;">Ücret</th><th style="background-color: lightgreen;">Cari</th>
-<th style="background-color: lightgreen;">Personel</th><th style="background-color: lightgreen;">Ödeme</th><th style="background-color: lightgreen;">Kayıt Zamanı</th>
-</tr>
-</thead>
-<tbody id="listeGovde"></tbody>
+      <!-- 1. SATIR -->
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px;">
+        <label style="display: flex; align-items: center; gap: 4px;">⏰ 
+          <input id="filterStartDate" type="date" value=""/>
+        </label>
+        <label style="display: flex; align-items: center; gap: 4px;">🚗 
+          <input id="filterPlaka" placeholder="Plaka No" style="width: 80px;" type="text"/>
+        </label>
+        <label style="display: flex; align-items: center; gap: 4px;">👨‍🔧 
+          <input id="filterPersonel" placeholder="Personel Adı" style="width: 80px;" type="text"/>
+        </label>
+        <label style="display: flex; align-items: center; gap: 4px;">🏢 
+          <input id="filterCariTipi" placeholder="Cari Adı" style="width: 80px;" type="text"/>
+        </label>
+      </div>
+
+      <!-- 2. SATIR -->
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+        <label style="display: flex; align-items: center; gap: 4px;">🏁 
+          <input id="filterEndDate" type="date" value=""/>
+        </label>
+        <span class="toggle-button active" id="filterOdenmis" onclick="this.classList.toggle('active')" title="Ödenmişler" style="padding: 5px 10px;">Ödenmişler</span>
+        <span class="toggle-button active" id="filterOdenmemis" onclick="this.classList.toggle('active')" title="Ödenmemişler" style="padding: 5px 10px;">Ödenmemişler</span>
+        <button class="menu-button" id="filterBtn" onclick="filtreleKayitlar()" title="Filtrele">🔍</button>
+        <button class="menu-button" id="clearBtn" onclick="temizleFiltreVeListele()" title="Temizle">✖</button>
+      </div>
+
+    </div>
+
+    <!-- Tablonun etrafına scroll için div eklendi -->
+    <div style="overflow-x: auto;">
+<table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
+  <thead>
+    <tr>
+      <th style="background-color: lightgreen; text-align: left;">Sıra No</th>
+      <th style="background-color: lightgreen; text-align: left;">Plaka</th>
+      <th style="background-color: lightgreen; text-align: left;">İşlem</th>
+      <th style="background-color: lightgreen; text-align: left;">Ekstra</th>
+      <th style="background-color: lightgreen; text-align: left;">Ücret</th>
+      <th style="background-color: lightgreen; text-align: left;">Cari</th>
+      <th style="background-color: lightgreen; text-align: left;">Personel</th>
+      <th style="background-color: lightgreen; text-align: left;">Ödeme</th>
+      <th style="background-color: lightgreen; text-align: left;">Kayıt Zamanı</th>
+    </tr>
+  </thead>
+  <tbody id="listeGovde"></tbody>
 </table>
-</div>
+    </div>
+
+  </div>
 </div>
 
 <div id="personelFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #eef;">
@@ -183,17 +270,28 @@
 <br/>
 <button onclick="aktarCariComboboxa()">Kayıt Formuna Aktar</button>
 </div>
-<div id="raporFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #ddf; max-width:680px; margin-left:auto; margin-right:auto;">
-<h2>Personel Hakediş Raporu</h2>
-<label>Rapor Tarihi:
-  <input id="raporTarihi" type="date" />
-</label>
-<div id="raporTabloAlani" style="margin-top: 6px; max-width:680px; margin-left:auto; margin-right:auto;"></div>
+<div id="raporFormu" style="
+  display: none;
+  position: fixed;
+  top: 60px;
+  left: 10px;
+  width: 680px;
+height: auto;
+max-height: calc(100vh - 20px); 
+overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 20px;
+  background: #ddf;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  z-index: 1000;
+">
+  <h2>Personel Hakediş Raporu</h2>
+  <label>Rapor Tarihi:
+    <input id="raporTarihi" type="date" />
+  </label>
+  <div id="raporTabloAlani" style="margin-top: 6px;"></div>
 </div>
-
-
-
-
 <!-- Ayarlar Formu (fiyat listesi dahil) -->
 <div id="ayarlarFormu" style="display: none; border: 1px solid #ccc; padding: 10px;">
   <h2>Ayarlar</h2>
@@ -217,6 +315,7 @@
 
 
 <script>
+let db;  
 
 let fiyatlarCache = [];
 
@@ -441,39 +540,69 @@ document.getElementById("odemeTipi").addEventListener("change", () => {
 });
 
   gizleRaporFormu();
-    gosterSadeceListe();
-  const request = indexedDB.open("GopCarWash", 2);
 
-  request.onupgradeneeded = function(event) {
-    var db = event.target.result;
+const request = indexedDB.open("GopCarWash", 1);
 
-    // Create Personeller table
-    if (!db.objectStoreNames.contains('Personeller')) {
-        var personellerStore = db.createObjectStore('Personeller', { keyPath: 'id' });
-        personellerStore.createIndex('ad', 'ad', { unique: false });
-        personellerStore.createIndex('yemekUcreti', 'yemekUcreti', { unique: false });
+request.onupgradeneeded = function(event) {
+  db = event.target.result;
 
-        // Add example data to Personeller table
-        personellerStore.transaction.oncomplete = function(event) {
-            var personellerObjectStore = db.transaction('Personeller', 'readwrite').objectStore('Personeller');
-            personellerObjectStore.add({ id: 'p1', ad: 'Ahmet Yılmaz', yemekUcreti: true });
-        };
-    }
+  // Fiyatlar tablosu
+  if (!db.objectStoreNames.contains("Fiyatlar")) {
+    const fiyatlarStore = db.createObjectStore("Fiyatlar", { keyPath: "kod" });
 
-    // Create Cariler table
-    if (!db.objectStoreNames.contains('Cariler')) {
-        var carilerStore = db.createObjectStore('Cariler', { keyPath: 'id' });
-        carilerStore.createIndex('unvan', 'unvan', { unique: false });
+    fiyatlarStore.transaction.oncomplete = function () {
+      const store = db.transaction("Fiyatlar", "readwrite").objectStore("Fiyatlar");
+      const ornekFiyatlar = [
+        { kod: 'A1', isim: 'İçdış', tutar: 400 },
+        { kod: 'A2', isim: 'Dış', tutar: 250 },
+        { kod: 'A3', isim: 'B.İçdış', tutar: 500 },
+        { kod: 'A4', isim: 'B.Dış', tutar: 300 },
+        { kod: 'A5', isim: 'M.İçdış', tutar: 800 },
+        { kod: 'A6', isim: 'M.Dış', tutar: 500 },
+        { kod: 'A7', isim: 'Motor', tutar: 250 },
+        { kod: 'E1', isim: 'Ozon', tutar: 100 },
+        { kod: 'E2', isim: 'Cila', tutar: 100 },
+        { kod: 'E3', isim: 'Buhar', tutar: 200 },
+        { kod: 'E4', isim: 'Detay1', tutar: 2000 },
+        { kod: 'E5', isim: 'Detay2', tutar: 4000 },
+        { kod: 'E6', isim: 'PastaCila', tutar: 5000 }
+      ];
+      ornekFiyatlar.forEach(f => store.add(f));
+    };
+  }
 
-        // Add example data to Cariler table
-        carilerStore.transaction.oncomplete = function(event) {
-            var carilerObjectStore = db.transaction('Cariler', 'readwrite').objectStore('Cariler');
-            carilerObjectStore.add({ id: 'c1', unvan: 'Rentacar A.Ş.' });
-        };
-    }
-    db = event.target.result;
+  // Diğer tablolar...
+  if (!db.objectStoreNames.contains("Personeller")) {
+    const store = db.createObjectStore("Personeller", { keyPath: "id" });
+    store.createIndex("ad", "ad", { unique: false });
+    store.createIndex("yemekUcreti", "yemekUcreti", { unique: false });
+  }
+
+  if (!db.objectStoreNames.contains("Cariler")) {
+    const store = db.createObjectStore("Cariler", { keyPath: "id" });
+    store.createIndex("unvan", "unvan", { unique: false });
+  }
+
+  if (!db.objectStoreNames.contains("kayitlar")) {
     db.createObjectStore("kayitlar", { keyPath: "id" });
-  };
+  }
+};
+
+request.onsuccess = function(event) {
+  db = event.target.result;
+
+  if (db.objectStoreNames.contains("Fiyatlar")) {
+    fiyatlariYukleVeCachele(guncelleIsimlerleFiyatEtiketleri);
+    doldurAnaIslemSecenekleri();
+  } else {
+    console.warn("Fiyatlar tablosu bulunamadı.");
+  }
+
+  doldurPersonelFormu();
+  yuklePersonellerCombobox();
+  doldurCariFormu();
+  listeleKayitlar();
+};
 
 
   document.getElementById("btnKaydet").addEventListener("click", kaydetKayit);
@@ -552,6 +681,8 @@ function kaydetKayit() {
   const kayitId = document.getElementById("kayitFormu").dataset.kayitId;
   const now = new Date();
   const id = kayitId || crypto.randomUUID();
+
+
 
   
   const cariVal = document.getElementById("cari").value;
@@ -674,26 +805,43 @@ const toplamOdemeGirilen = nakit + kart + vadeli;
   }
 
   if (kayitId) {
-    const tx = db.transaction("kayitlar", "readonly");
-    tx.objectStore("kayitlar").get(kayitId).onsuccess = e => devamEt(e.target.result.sirano);
-  } else {
-    getNextSiraNo(devamEt);
-  }
+  const tx = db.transaction("kayitlar", "readonly");
+  tx.objectStore("kayitlar").get(kayitId).onsuccess = function (e) {
+    const eskiKayit = e.target.result;
+    if (eskiKayit && eskiKayit.kayitZamani) {
+      const kayitTarihi = eskiKayit.kayitZamani.split(/[ ,]/)[0];
+      const bugunStr = new Date().toLocaleDateString("tr-TR");
+      if (kayitTarihi !== bugunStr) {
+        alert("Yalnızca bugüne ait kayıtlar düzenlenebilir.");
+        return;
+      }
+    }
+    devamEt(eskiKayit.sirano);
+  };
+} else {
+  getNextSiraNo(devamEt);
+}
 }
 
 function silKayit(id) {
-  const tx = db.transaction("kayitlar", "readwrite");
-  const store = tx.objectStore("kayitlar");
-  store.get(id).onsuccess = function(event) {
-    const veri = event.target.result;
-    if (veri) {
-      veri.cancelled = true;
-      store.put(veri);
-      tx.oncomplete = () => {
-        document.getElementById("kayitFormu").style.display = "none";
+  const tx = db.transaction("kayitlar", "readonly");
+  tx.objectStore("kayitlar").get(id).onsuccess = function (e) {
+    const kayit = e.target.result;
+    if (kayit && kayit.kayitZamani) {
+      const kayitTarihi = kayit.kayitZamani.split(/[ ,]/)[0];
+      const bugunStr = new Date().toLocaleDateString("tr-TR");
+      if (kayitTarihi !== bugunStr) {
+        alert("Yalnızca bugüne ait kayıtlar silinebilir.");
+        return;
+      }
+    }
+
+    if (confirm("Bu kaydı silmek istediğinize emin misiniz?")) {
+      const txSil = db.transaction("kayitlar", "readwrite");
+      txSil.objectStore("kayitlar").delete(id);
+      txSil.oncomplete = () => {
         listeleKayitlar();
-        gizleRaporFormu();
-    gosterSadeceListe();
+        document.getElementById("kayitFormu").style.display = "none";
       };
     }
   };
@@ -744,12 +892,15 @@ function listeleKayitlar() {
       else sinif = "odenmis-kayit";
       if (d.cancelled) sinif = "iptal-kayit";
       tr.className = sinif;
-      tr.innerHTML = `<td>${d.sirano}</td><td style="text-align:right;">${d.plaka}</td>
-     <td style="text-align:right;">${anaIslemIsim}</td>
-     <td style="text-align:right;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
-        <td>${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td><td style="text-align:right;">${d.cari}</td>
-        <td>${d.personel}</td><td style="text-align:right;">${detayliOdemeTipi(d)}</td>
-        <td>${d.kayitZamani}</td>`;
+      tr.innerHTML = `  <td style="text-align:left;">${d.sirano}</td>
+  <td style="text-align:left;">${d.plaka}</td>
+  <td style="text-align:left;">${anaIslemIsim}</td>
+  <td style="text-align:left;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
+  <td style="text-align:right;">${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td>
+  <td style="text-align:left;">${d.cari}</td>
+  <td style="text-align:left;">${d.personel}</td>
+  <td style="text-align:left;">${detayliOdemeTipi(d)}</td>
+  <td style="text-align:left;">${d.kayitZamani}</td>`;
       tr.onclick = () => formuDoldur(d);
       tbody.appendChild(tr);
     });
@@ -779,68 +930,84 @@ function formuDoldur(d) {
   document.getElementById("listeFormu").style.display = "none";
 }
 
-
 function filtreleKayitlar() {
   const start = document.getElementById("filterStartDate").value;
   const end = document.getElementById("filterEndDate").value;
   const plaka = document.getElementById("filterPlaka").value.toLowerCase();
   const personel = document.getElementById("filterPersonel").value.toLowerCase();
-
-  const tx = db.transaction("kayitlar", "readonly");
+  const cariTipi = document.getElementById("filterCariTipi").value.toLowerCase();
+  
+const tx = db.transaction("kayitlar", "readonly");
   tx.objectStore("kayitlar").getAll().onsuccess = function(e) {
     const tbody = document.getElementById("listeGovde");
     tbody.innerHTML = "";
 
     const filtered = e.target.result.filter(d => {
-      const tarihStr = d.kayitZamani.split(" ")[0]; // örnek: "20.06.2025"
-    const tarih = new Date(tarihStr.split(".").reverse().join("-")); // "2025-06-20"
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+      const tarihStr = d.kayitZamani.split(" ")[0];
+      const tarih = new Date(tarihStr.split(".").reverse().join("-"));
+      const startDate = new Date(start);
+      const endDate = new Date(end);
 
-    if (start && tarih < startDate) return false;
-    if (end && tarih > endDate) return false;
+      if (start && tarih < startDate) return false;
+      if (end && tarih > endDate) return false;
       if (plaka && !d.plaka.toLowerCase().includes(plaka)) return false;
       if (personel && !d.personel.toLowerCase().includes(personel)) return false;
-      
+      if (cariTipi && !(d.cari || "").toLowerCase().includes(cariTipi)) return false;
+
       const odeme = d.odemeTipi?.toLowerCase();
       const showOdenmis = document.getElementById("filterOdenmis").classList.contains("active");
       const showOdenmemis = document.getElementById("filterOdenmemis").classList.contains("active");
-
       const isOdenmis = odeme && odeme !== "seçiniz";
       if ((isOdenmis && !showOdenmis) || (!isOdenmis && !showOdenmemis)) return false;
 
       return true;
-            
     });
 
     filtered.sort((a, b) => b.sirano.localeCompare(a.sirano)).forEach(d => {
       const tr = document.createElement("tr");
-      if (d.cancelled) tr.classList.add("iptal-kayit");
+      const anaIslemIsim = fiyatlarCache.find(f => f.kod === d.anaIslem)?.isim || d.anaIslem;
+
       let sinif = "";
-      const odeme = d.odemeTipi?.toLowerCase();
       const nakit = d.nakitOdeme || 0;
       const kart = d.krediKartOdeme || 0;
       const vadeli = d.vadeliOdeme || 0;
       const toplam = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
       const girilen = nakit + kart + vadeli;
+
       if (girilen === 0) sinif = "odenmemis-kayit";
       else if (girilen < toplam) sinif = "eksik-odeme-kayit";
       else sinif = "odenmis-kayit";
       if (d.cancelled) sinif = "iptal-kayit";
+
       tr.className = sinif;
-      tr.innerHTML = `<td>${d.sirano}</td><td style="text-align:right;">${d.plaka}</td><td style="text-align:right;">${d.anaIslem}</td><td style="text-align:right;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
-        <td>${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td><td style="text-align:right;">${d.cari}</td>
-        <td>${d.personel}</td><td style="text-align:right;">${detayliOdemeTipi(d)}</td>
-        <td>${d.kayitZamani}</td>`;
+      tr.innerHTML = `
+          <td style="text-align:left;">${d.sirano}</td>
+  <td style="text-align:left;">${d.plaka}</td>
+  <td style="text-align:left;">${anaIslemIsim}</td>
+  <td style="text-align:left;">${d.ekstra.map(e => ekstraKisaltmalar[e] || e).join(",")}</td>
+  <td style="text-align:right;">${parseFloat(d.toplamOdeme.replace(/[^\d.]/g, "") || 0)}</td>
+  <td style="text-align:left;">${d.cari}</td>
+  <td style="text-align:left;">${d.personel}</td>
+  <td style="text-align:left;">${detayliOdemeTipi(d)}</td>
+  <td style="text-align:left;">${d.kayitZamani}</td>
+      `;
       tr.onclick = () => formuDoldur(d);
       tbody.appendChild(tr);
     });
   };
 }
 
+function temizleFiltreVeListele() {
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD formatı
 
+  document.getElementById("filterStartDate").value = today;
+  document.getElementById("filterEndDate").value = today;
+  document.getElementById("filterPlaka").value = "";
+  document.getElementById("filterPersonel").value = "";
+  document.getElementById("filterCariTipi").value = "";
 
-
+  listeleKayitlar();
+}
 
 document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("odemeTipi").addEventListener("change", () => {
@@ -948,38 +1115,7 @@ function gosterSadeceRapor() {
 // Yeni Araç butonuna tıklanınca
 
 
-let db;
 
-const request = indexedDB.open("GopCarWash", 2);
-
-request.onupgradeneeded = function(event) {
-  db = event.target.result;
-
-  if (!db.objectStoreNames.contains("kayitlar")) {
-    db.createObjectStore("kayitlar", { keyPath: "id" });
-  }
-
-  if (!db.objectStoreNames.contains("Personeller")) {
-    const store = db.createObjectStore("Personeller", { keyPath: "id" });
-    store.createIndex("ad", "ad", { unique: false });
-    store.createIndex("yemekUcreti", "yemekUcreti", { unique: false });
-  }
-
-  if (!db.objectStoreNames.contains("Cariler")) {
-    const store = db.createObjectStore("Cariler", { keyPath: "id" });
-    store.createIndex("unvan", "unvan", { unique: false });
-  }
-};
-
-request.onsuccess = function(event) {
-  db = event.target.result;
-  doldurPersonelFormu();
-  yuklePersonellerCombobox();
-  doldurCariFormu();
-  doldurAnaIslemSecenekleri();
-fiyatlariYukleVeCachele(guncelleIsimlerleFiyatEtiketleri);
-  listeleKayitlar();
-};
 
 function doldurPersonelFormu() {
   const kutuAlan = document.getElementById("personelKutulari");
