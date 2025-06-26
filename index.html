@@ -205,6 +205,7 @@ th, td {
 }
 </style></head>
 <body>
+
 <div id="menuContainer" style="
   display: flex;
   flex-wrap: wrap;
@@ -215,7 +216,26 @@ th, td {
   margin-top: 20px;
   margin-bottom: 20px;
 ">
-<button class="menu-button" id="btnListe" title="Ana Menü">🏠</button><button class="menu-button" id="btnYeniArac" title="Yeni Araç">🚗</button><button class="menu-button" id="btnRapor" title="Rapor">📊</button><button class="menu-button" id="btnAyarlar" title="Ayarlar">⚙️</button></div>
+  <button class="menu-button" id="btnListe" title="Ana Menü">🏠</button>
+  <button class="menu-button" id="btnYeniArac" title="Yeni Araç">🚗</button>
+  <button class="menu-button" id="btnRapor" title="Rapor">📊</button>
+  <button class="menu-button" id="btnAyarlar" title="Ayarlar">⚙️</button>
+
+ <span id="firmaAdi" style="
+  margin-left: 30px;
+  font-size: 28px;
+  font-weight: bold;
+  color: navy;
+  background-color: #e0ecff;
+  padding: 6px 12px;
+  border-radius: 8px;
+">
+  Girne Oto Yıkama
+</span>
+
+</div>
+
+
 <style>
 .odenmis-kayit { background-color: #ccffcc; }  /* yeşil */  /* açık mavi */
 .odenmemis-kayit { background-color: #ffcccc; }  /* açık pembe */  /* açık pembe */
@@ -241,15 +261,84 @@ th, td {
   background-color: #def;
 }
 </style>
-<div id="loginEkrani" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#eef; display:flex; align-items:center; justify-content:center; z-index:9999;">
-<div style="background:white; padding:30px; border:1px solid #ccc; box-shadow:2px 2px 10px rgba(0,0,0,0.2); text-align:center;">
-<h2>Giriş Yap</h2>
-<input id="kullaniciAdi" placeholder="Kullanıcı Adı" style="margin:5px; padding:8px; width:200px;" type="text"/><br/>
-<input id="sifre" placeholder="Şifre" style="margin:5px; padding:8px; width:200px;" type="password"/><br/>
-<button onclick="kontrolEtGiris()">Giriş</button>
-<p id="girisHata" style="color:red; display:none;">Hatalı kullanıcı adı veya şifre</p>
+
+<div id="loginEkrani" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffe6e6; /* açık pembe */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 60px;
+  z-index: 9999;
+  box-sizing: border-box;
+  overflow-y: auto;
+">
+  <div style="
+  background: #e6f0ff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 10px;
+  box-sizing: border-box;
+">
+
+    <span style="
+      display: inline-block;
+      background-color: #e0ecff;
+      color: navy;
+      font-size: 22px;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    ">
+      Girne Oto Yıkama
+    </span>
+
+ <input id="kullaniciAdi" placeholder="Kullanıcı Adı" type="text" style="
+  width: 160px;
+  padding: 10px;
+  font-size: 16px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+"/><br/>
+
+<input id="sifre" placeholder="Şifre" type="password" style="
+  width: 160px;
+  padding: 10px;
+  font-size: 16px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+"/><br/>
+
+
+   <button onclick="kontrolEtGiris()" style="
+  width: 150px;
+  padding: 8px;
+  font-size: 16px;
+  background-color: navy;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+">Giriş</button>
+
+
+    <p id="girisHata" style="color:red; display:none; font-size: 14px; margin-top: 10px;">Hatalı kullanıcı adı veya şifre</p>
+  </div>
 </div>
-</div>
+
+
+
 <div id="kayitFormu" style="
   max-width: 650px;
   top: 120px;
