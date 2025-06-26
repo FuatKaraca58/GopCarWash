@@ -765,6 +765,11 @@ function sifirlaDatabase() {
   }
 }
 
+function toggleEkstra(elem) {
+  elem.classList.toggle("active");
+  guncelleToplamOdeme();
+}
+
 function guncelleToplamOdeme() {
   const anaIslemSecim = document.getElementById("anaIslem").value;
 
