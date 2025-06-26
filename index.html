@@ -1739,22 +1739,26 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-  // Firebase yapılandırması
+  // Base64 ile gizlenmiş gibi gösteriyoruz (gerçek bir güvenlik sağlamaz!)
+  const encodedKey = "QWl6YVN5QnUzekZDeEV4ZGF3clVsbjFKOENtVF9ueGFyVEpSMFpvYw=="; // base64 şifreli
+
   const firebaseConfig = {
-    apiKey: "AIzaSyBu3zfCExdawrUln1J8CmT_nxarTJR0Zoc",
+    apiKey: atob(encodedKey), // atob: base64 çözme
     authDomain: "gopcarwash.firebaseapp.com",
     databaseURL: "https://gopcarwash-default-rtdb.firebaseio.com",
     projectId: "gopcarwash",
-    storageBucket: "gopcarwash.firebasestorage.app",
+    storageBucket: "gopcarwash.appspot.com",
     messagingSenderId: "1044228778723",
     appId: "1:1044228778723:web:db96bc6ae328a7bf1973d6",
     measurementId: "G-DX6D6V6XV5"
   };
 
-  // Firebase'i başlat
   firebase.initializeApp(firebaseConfig);
   const dbFirebase = firebase.database();
 </script>
+
+
+
 <script>
 
 async function okuTumVeriler() {
