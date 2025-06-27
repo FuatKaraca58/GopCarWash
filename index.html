@@ -2,6 +2,72 @@
 
 <html lang="tr">
 <head>
+<style>
+/* 1. Menü mobilde yanyana dizilsin */
+#menuContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;    
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+}
+
+ 
+
+/* 2. Liste scroll düzeltme */
+#listeFormu > div[style*="overflow-x"] {
+  overflow-x: auto;
+  width: 100%;
+}
+#listeFormu table {
+  min-width: 800px;
+}
+
+/* 3. Kayıt formu sıkıştırma ve scroll */
+#kayitFormu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  position: absolute;
+  top: 80px;           /* yukarıdan boşluk */
+  left: 10px;          /* sola boşluk */
+  right: 10px;         /* sağa boşluk – yeni eklendi */
+  max-width: calc(100vw - 40px);  /* sayfanın sağından taşmasın */
+  max-height: calc(100vh - 100px); /* alta boşluk bıraksın */
+  padding: 12px 16px;
+  overflow-y: auto;
+  background: #ffe6e6;
+  box-sizing: border-box;
+  z-index: 9999;
+  border-radius: 8px; /* görsel olarak da daha güzel olur */
+}
+
+/* 4. Rapor formu mobilde daha esnek */
+#raporFormu {
+  max-width: 95vw;
+  max-height: calc(100vh - 60px);
+  overflow: auto;
+  left: 10px !important;
+  right: 10px;
+  position: absolute !important;
+}
+
+/* Bonus: Menü butonları daha rahat tıklansın */
+.menu-button {
+  width: 48px;
+  height: 48px;
+  font-size: 20px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  margin: 4px;
+  cursor: pointer;
+  background-color: white;
+}
+</style>
+
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GopCarWash</title>
@@ -109,35 +175,6 @@ html, body {
   margin-bottom: 2px;
 }
 
-/* Ana menü butonlarını yatayda ortala */
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center !important;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-/* Mobilde dikey dizilim */
-        flex-direction: column;
-        align-items: center !important;
-    }
-    button {
-        width: 90%;
-        max-width: 300px;
-        margin: 0.2rem auto;
-    }
-}
-
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-    flex-direction: column;
-    align-items: center;
-  }
-}
 </style>
 <style>
   body {
@@ -186,22 +223,6 @@ th, td {
 <style>
 .toggle-button input[type="checkbox"]:checked + label {
   background-color: #b3ffcc !important; /* Açık yeşil */
-}
-</style><style>
-#menuContainer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-  padding-left: 30px;
-}
-@media (max-width: 600px) {
-  #menuContainer {
-    flex-direction: column;
-    align-items: flex-start;
-    padding-left: 30px;
-  }
 }
 </style></head>
 <body>
@@ -379,7 +400,7 @@ th, td {
 <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px;"><label>Ücret Farkı: <input id="ucretFarki" onchange="guncelleToplamOdeme()" style="width: 80px;" type="number" value="0"/></label><label>Harici Ücret: <input id="hariciUcret" onchange="guncelleToplamOdeme()" style="width: 80px;" type="number" value="0"/></label></div>
 </div>
 <div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"></div><div style="display: flex; gap: 6px; margin-top: 4px; justify-content: flex-start;"><button class="menu-button" id="btnKaydet" style="min-width: 70px; font-size: 12px; padding: 4px;">💾</button><button class="menu-button" id="btnSil" style="min-width: 70px; font-size: 12px; padding: 4px;">🗑️</button><button class="menu-button" id="btnVazgec" style="min-width: 70px; font-size: 12px; padding: 4px;">❌</button></div></div><div style="display: flex; gap: 6px; margin-top: 6px; justify-content: flex-start;"></div>
-<div id="listeFormu" style="margin-top: 20px;">
+<div id="listeFormu" style="margin-top: 20px; max-height: calc(100vh - 100px); overflow-y: auto; padding: 10px;">
 <div id="listeAlani">
 <div style="background: #e6f0ff; margin-bottom: 10px; padding: 10px;">
 <!-- 1. SATIR -->
@@ -413,7 +434,7 @@ th, td {
 </div>
 </div>
 <!-- Liste tablosu alanı -->
-<div style="overflow-x: auto;">
+
 <table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
 <thead>
 <tr>
@@ -525,18 +546,18 @@ let fiyatlarCache = [];
 const adminSifre = "1536"; 
 
 function kontrolEtGiris() {
-  const kullanici = document.getElementById("kullaniciAdi").value.trim().toLowerCase();
+  const kullanici = document.getElementById("kullaniciAdi").value.trim();
   const sifre = document.getElementById("sifre").value.trim();
 
   const kullanicilar = {
-    "ayse": "123",
-    "mucize": "321",
-    "lisan": "5858"
+    "AYSE": "123",
+    "MUCIZE": "321",
+    "LISAN": "5858"
   };
 
   if (kullanicilar[kullanici] && kullanicilar[kullanici] === sifre) {
-    CihazIsmi = kullanici; // Cihaz ismi giriş yapan kullanıcı olur
-    console.log("Aktif kullanıcı cihaz ismi:", CihazIsmi); // ✅ Başarılı girişte log bas
+    CihazIsmi = kullanici;
+    console.log("Aktif kullanıcı cihaz ismi:", CihazIsmi);
     document.getElementById("loginEkrani").style.display = "none";
     gosterSadeceListe();
   } else {
@@ -604,6 +625,15 @@ function guncelleIsimlerleFiyatEtiketleri() {
 
 document.addEventListener("DOMContentLoaded", () => {
   doldurYedekSecimi();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const kullaniciInput = document.getElementById("kullaniciAdi");
+  if (kullaniciInput) {
+    kullaniciInput.addEventListener("input", function () {
+      this.value = this.value.toUpperCase();
+    });
+  }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
