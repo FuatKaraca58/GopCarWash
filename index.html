@@ -7,12 +7,12 @@
 #menuContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;    
+  justify-content: center;
   align-items: center;
   gap: 6px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding-left: 10px;
+  margin: 20px auto;
+  padding: 0;
+  max-width: 100%;
 }
 
  
@@ -371,9 +371,10 @@ th, td {
   gap: 4px;
   padding: 10px;
   box-sizing: border-box;
-  max-height: calc(100vh - 80px);
+  max-height: calc(100vh - 80px + 100px); /* fazladan 100px scroll için */
   overflow-y: auto;
 ">
+
 <div style="display: flex; align-items: center; gap: 100px;"><h2>Araç Kayıt Formu</h2><div id="toplamOdeme" style=" padding-left: 40px; float: right; margin-right: 40px">Toplam Ödeme: 0 ₺</div></div><div style="display: flex; gap: 10px; flex-wrap: wrap;"><label>🚗 <input id="plaka" placeholder="Plaka No" style="width: 120px;" type="text"/></label><label>💬 <input id="aciklama" placeholder="Açıklama" style="width: 200px;" type="text"/></label></div><div style="display: block; margin-top: 4px;">
 <label>🚿 
   <select id="anaIslem" onchange="guncelleToplamOdeme()" style="width: 100px;">
@@ -472,21 +473,23 @@ th, td {
 </div>
 <div id="raporFormu" style="
   display: none;
-  position: fixed;
-  margin-top: 20px;
-  top: 100px;
+  position: absolute;
+  top: 120px;
   left: 10px;
-  width: 680px;
-  height: auto;
-  max-height: calc(100vh - 120px); /* DÜZENLENDİ */
+  max-width: 650px;
+  background: #ddf;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 10px;
+  box-sizing: border-box;
+  max-height: calc(100vh - 80px + 100px); /* fazladan scroll için */
   overflow-y: auto;
   border: 1px solid #ccc;
-  padding: 20px;
-  background: #ddf;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  box-sizing: border-box;
   z-index: 1000;
 ">
+
 <h2>Personel Hakediş Raporu</h2>
 <label>Rapor Tarihi:
     <input id="raporTarihi" type="date"/>
@@ -2058,7 +2061,7 @@ async function doldurYedekSecimi() {
       select.appendChild(opt);
     });
   } else {
-    alert("Hiç yedek bulunamadı.");
+ console.log("Hiç yedek bulunamadı.");
   }
 }
 
