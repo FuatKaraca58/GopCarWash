@@ -141,9 +141,13 @@ html, body {
 #personelKutulari > div {
   display: flex;
   align-items: center;
-  padding: 2px 0;
-  gap: 8px;
+  gap: 1px;             /* input ile checkbox arası boşluk */
+  padding: 0;           /* satır içi boşluk sıfır */
+  margin: 0;            /* satırlar arası boşluk sıfır */
+  line-height: 1;       /* fazladan dikey boşlukları azaltır */
+  height: 30px;         /* sabit yükseklik, istersen kaldırabilirsin */
 }
+
 
 #personelKutulari input[type="text"] {
   width: 180px;
@@ -462,7 +466,65 @@ th, td {
 </div>
 <br/>
 <button onclick="aktarPersonelComboboxa()">Kayıt Formuna Aktar</button>
+<button onclick="temizlePersonelFormu()">Formu Temizle</button>
+
 </div>
+
+<div id="fiyatFormu" style="
+  display: none;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-top: 6px;
+  background: #ffffdd;
+  width: 680px;
+  margin-left: 30px;
+">
+
+  <h2>Fiyat Listesi</h2>
+
+  <div id="fiyatlarListesi">
+    <!-- JS ile doldurulacak -->
+  </div>
+
+  <br/>
+  <button onclick="kaydetFiyatlar()">💾 Kaydet</button>
+
+</div>
+
+
+
+<div id="gelismisAyarlarFormu" style="display: none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #ffe0b3; width: 680px; margin-left: 30px;">
+
+  <h2>Gelişmiş Ayarlar</h2>
+
+  <fieldset style="margin-bottom: 16px; background: #ffe0b3; padding: 12px; border: 1px solid #cc9900;">
+    <legend><strong>2. Gelişmiş Ayarlar</strong></legend>
+
+    <div style="margin-bottom: 6px;">
+      <button id="btnSifirlaDB">Tüm Verileri Sil</button>
+    </div>
+
+    <div style="margin-bottom: 6px;">
+      <button type="button" id="btnBulutaKaydet">Buluta Kaydet</button>
+    </div>
+
+    <div id="yedekSecimAlani" style="margin-bottom: 6px;">
+      <label for="yedekSecim">Yedek Seç:</label>
+      <select id="yedekSecim">
+        <option value="">-- Yedek Seçin --</option>
+      </select>
+    </div>
+
+    <div>
+      <button type="button" id="btnBuluttanYukle">Buluttan Yükle</button>
+    </div>
+
+  </fieldset>
+
+</div>
+
+
+
 <div id="cariFormu" style="display:none; border: 1px solid #ccc; padding: 20px; margin-top: 6px; background: #ffe; width: 680px; margin-left: 30px;">
 <h2>Cari Listesi</h2>
 <div id="cariKutulari">
@@ -489,13 +551,28 @@ th, td {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   z-index: 1000;
 ">
+  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+    <h2 style="margin-bottom: 6px;">Personel Hakediş Raporu</h2>
+  </div>
 
-<h2>Personel Hakediş Raporu</h2>
-<label>Rapor Tarihi:
-    <input id="raporTarihi" type="date"/>
-</label>
-<div id="raporTabloAlani" style="margin-top: 6px;"></div>
+  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+    <label style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+      Rapor Tarihi:
+      <input id="raporTarihi" type="date" style="width: 140px;" />
+    </label>
+    <label style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+      BaşlangıçNo:
+      <input id="baslangicSirano" type="number" placeholder="ilkNo" style="width: 80px;" />
+    </label>
+
+    <button onclick="olusturHakedişRaporu()" 
+            style="padding: 2px 4px; font-size: 12px; height: 24px; width: 24px;" 
+            title="Raporu Yenile">🔁</button>
+  </div>
+
+  <div id="raporTabloAlani" style="margin-top: 6px;"></div>
 </div>
+
 <!-- Ayarlar Formu (fiyat listesi dahil) -->
 <div id="ayarlarFormu" style="display: none; border: 1px solid #ccc; margin-top: 20px; padding: 10px;">
 
@@ -504,39 +581,10 @@ th, td {
     <legend><strong>1. Personel ve Cari Listeleri</strong></legend>
     <button id="btnPersonel">Personel Listesi</button>
     <button id="btnCari">Cari Listesi</button>
-  </fieldset>
-
-  <!-- 2. Kısım: Gelişmiş Ayarlar (Turuncu) -->
-  <fieldset style="margin-bottom: 16px; background: #ffe0b3; padding: 12px; border: 1px solid #cc9900;">
-    <legend><strong>2. Gelişmiş Ayarlar</strong></legend>
-
-    <div style="margin-bottom: 6px;">
-      <button id="btnSifirlaDB">Tüm Verileri Sil</button>
-    </div>
-
-    <div style="margin-bottom: 6px;">
-      <button type="button" id="btnBulutaKaydet">Buluta Kaydet</button>
-    </div>
-
-    <div id="yedekSecimAlani" style="margin-bottom: 6px;">
-      <label for="yedekSecim">Yedek Seç:</label>
-      <select id="yedekSecim">
-        <option value="">-- Yedek Seçin --</option>
-      </select>
-    </div>
-
-    <div>
-      <button type="button" id="btnBuluttanYukle">Buluttan Yükle</button>
-    </div>
-  </fieldset>
-
-  <!-- 3. Kısım: Fiyat Listesi (Zaten Sarı) -->
-  <fieldset style="background: #ffd; padding: 12px;">
-    <legend><strong>3. Fiyat Listesi</strong></legend>
-    <div id="fiyatlarListesi"></div>
-    <br/>
-    <button onclick="kaydetFiyatlar()">💾 Kaydet</button>
-  </fieldset>
+    <button id="btnFiyatListesi">Fiyat Listesi</button>
+    <button id="btnGelismis" onclick="gosterSadeceGelismisAyarlar()">Gelişmiş Ayarlar</button>  
+</fieldset>
+ 
 
 </div>
 
@@ -722,57 +770,6 @@ function kaydetFiyatlar() {
   fiyatlariYukleVeCachele();
 }
 
-
-// Ortak görünüm kontrol fonksiyonu
-function gosterSadeceListe() {
-  const filt1 = document.getElementById("filterOdenmis");
-  const filt2 = document.getElementById("filterOdenmemis");
-  if (filt1 && !filt1.classList.contains("active")) filt1.classList.add("active");
-  if (filt2 && !filt2.classList.contains("active")) filt2.classList.add("active");
-document.getElementById("personelFormu").style.display = "none";
-  document.getElementById("kayitFormu").style.display = "none";
-  document.getElementById("listeFormu").style.display = "block";
-
-  // Ödeme filtre butonları default true olacak şekilde kontrol et
-  const od1 = document.getElementById("filterOdenmis");
-  const od2 = document.getElementById("filterOdenmemis");
-  if (!od1.classList.contains("active")) od1.classList.add("active");
-  if (!od2.classList.contains("active")) od2.classList.add("active");
-}
-
-function gosterSadeceForm() {
-  document.getElementById("personelFormu").style.display = "none";
-  document.getElementById("kayitFormu").style.display = "block";
-  document.getElementById("listeFormu").style.display = "none";
-}
-
-// Liste butonuna basıldığında sadece liste göster
-
-// Yeni Araç butonuna basıldığında form açılır, liste kapanır
-
-// Formdaki "Vazgeç" butonuna basıldığında tekrar listeye dön
-document.getElementById("btnVazgec").addEventListener("click", () => {
-  document.getElementById("kayitFormu").style.display = "none";
-  listeleKayitlar();
-  gizleRaporFormu();
-    gosterSadeceListe();
-});
-
-function gosterSadecePersonel() {
-  document.getElementById("kayitFormu").style.display = "none";
-  document.getElementById("listeFormu").style.display = "none";
-  document.getElementById("personelFormu").style.display = "block";
-}
-
-
-function gosterSadeceCari() {
-  document.getElementById("kayitFormu").style.display = "none";
-  document.getElementById("listeFormu").style.display = "none";
-  document.getElementById("personelFormu").style.display = "none";
-  document.getElementById("cariFormu").style.display = "block";
-}
-
-
 const ekstraKisaltmalar = {
   "E1": "O",     // Ozon
   "E2": "C",     // Cila
@@ -861,6 +858,20 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("kayitFormu").style.display = "none";
   });
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnVazgec = document.getElementById("btnVazgec");
+  if (btnVazgec) {
+    btnVazgec.addEventListener("click", () => {
+      gizleTumFormlar();
+      listeleKayitlar();
+      gosterSadeceListe();
+    });
+  }
+});
+
+
 
 function sifirlaDatabase() {
   const girilen = prompt("🔐 Veritabanını sıfırlamak için admin şifresini girin:");
@@ -1130,6 +1141,8 @@ function listeleKayitlar() {
   const tx = db.transaction("kayitlar", "readonly");
   const store = tx.objectStore("kayitlar");
 
+  resetFiltreAlanlari();
+
   store.getAll().onsuccess = function (e) {
     const tbody = document.getElementById("listeGovde");
     tbody.innerHTML = "";
@@ -1189,6 +1202,22 @@ function listeleKayitlar() {
     }
   };
 }
+
+function resetFiltreAlanlari() {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  document.getElementById("filterStartDate").value = today;
+  document.getElementById("filterEndDate").value = today;
+  document.getElementById("filterPlaka").value = "";
+  document.getElementById("filterPersonel").value = "";
+  document.getElementById("filterCariTipi").value = "";
+
+  // ödeme durum filtre butonlarını aktif hale getir
+  const od1 = document.getElementById("filterOdenmis");
+  const od2 = document.getElementById("filterOdenmemis");
+  if (od1 && !od1.classList.contains("active")) od1.classList.add("active");
+  if (od2 && !od2.classList.contains("active")) od2.classList.add("active");
+}
+
 
 function formuDoldur(d) {
   const f = document.getElementById("kayitFormu");
@@ -1301,14 +1330,7 @@ function filtreleKayitlar() {
 
 
 function temizleFiltreVeListele() {
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD formatı
-
-  document.getElementById("filterStartDate").value = today;
-  document.getElementById("filterEndDate").value = today;
-  document.getElementById("filterPlaka").value = "";
-  document.getElementById("filterPersonel").value = "";
-  document.getElementById("filterCariTipi").value = "";
-
+  resetFiltreAlanlari();
   listeleKayitlar();
 }
 
@@ -1372,20 +1394,53 @@ function gizleCariFormu() {
 // Liste butonuna tıklanınca
 
 
+function gosterSadeceListe() {
+  gizleTumFormlar();
+  document.getElementById("listeFormu").style.display = "block";
+
+  // Ödeme filtre butonları default true olacak şekilde kontrol et
+  const filt1 = document.getElementById("filterOdenmis");
+  const filt2 = document.getElementById("filterOdenmemis");
+  if (filt1 && !filt1.classList.contains("active")) filt1.classList.add("active");
+  if (filt2 && !filt2.classList.contains("active")) filt2.classList.add("active");
+}
+
+function gosterSadeceForm() {
+  gizleTumFormlar();
+  document.getElementById("kayitFormu").style.display = "block";
+}
+
+function gosterSadecePersonel() {
+  gizleTumFormlar();
+  document.getElementById("personelFormu").style.display = "block";
+}
+
+function gosterSadeceCari() {
+  gizleTumFormlar();
+  document.getElementById("cariFormu").style.display = "block";
+}
+
 function gosterSadeceRapor() {
-  document.getElementById("kayitFormu").style.display = "none";
-  document.getElementById("listeFormu").style.display = "none";
-  document.getElementById("personelFormu").style.display = "none";
-  document.getElementById("cariFormu").style.display = "none";
+  gizleTumFormlar();
   document.getElementById("raporFormu").style.display = "block";
 }
 
 
+function gosterSadeceAyarlar() {
+  gizleTumFormlar();
+  document.getElementById("ayarlarFormu").style.display = "block";
+}
 
-// Personel butonuna tıklanınca
+function gosterSadeceFiyatlar() {
+  gizleTumFormlar();
+  document.getElementById("fiyatFormu").style.display = "block";
+fiyatlariYukleVeCachele(gosterFiyatFormu);
+}
 
-// Yeni Araç butonuna tıklanınca
-
+function gosterSadeceGelismisAyarlar() {
+  gizleTumFormlar();
+  document.getElementById("gelismisAyarlarFormu").style.display = "block";
+}
 
 
 function doldurPersonelFormu() {
@@ -1435,22 +1490,61 @@ function aktarPersonelComboboxa() {
     personelCombo.remove(1);
   }
 
-  const tx = db.transaction("Personeller", "readwrite");
-  const store = tx.objectStore("Personeller");
+  // 1. Personelleri tamamen temizle
+  const txClear = db.transaction("Personeller", "readwrite");
+  const storeClear = txClear.objectStore("Personeller");
+
+  storeClear.clear().onsuccess = function () {
+    // 2. Yukarıdan aşağı dolu inputları sırala
+    const doluListesi = [];
+    for (let i = 1; i <= 30; i++) {
+      const ad = document.getElementById("p" + i).value.trim();
+      const yemek = document.getElementById("yemek" + i).checked;
+      if (ad) {
+        doluListesi.push({ ad, yemekUcreti: yemek });
+      }
+    }
+
+    // 3. Tüm inputları boşalt
+    for (let i = 1; i <= 30; i++) {
+      document.getElementById("p" + i).value = "";
+      document.getElementById("yemek" + i).checked = false;
+    }
+
+    // 4. Dolu kayıtları sırayla p1, p2... olarak forma yaz ve veritabanına kaydet
+    const txEkle = db.transaction("Personeller", "readwrite");
+    const storeEkle = txEkle.objectStore("Personeller");
+
+    doluListesi.forEach((p, index) => {
+      const id = "p" + (index + 1);
+      // Form inputlarını doldur
+      document.getElementById("p" + (index + 1)).value = p.ad;
+      document.getElementById("yemek" + (index + 1)).checked = p.yemekUcreti;
+
+      // IndexedDB'ye yaz
+      storeEkle.put({ id, ad: p.ad, yemekUcreti: p.yemekUcreti });
+
+      // ComboBox'a ekle
+      const opt = document.createElement("option");
+      opt.value = p.ad;
+      opt.text = p.ad;
+      personelCombo.appendChild(opt);
+    });
+
+    alert("Personel listesi boşluklar yukarı kaydırılarak sıralı şekilde kaydedildi.");
+  };
+}
+
+function temizlePersonelFormu() {
+  if (!confirm("Tüm personel giriş alanlarını temizlemek istiyor musunuz?")) return;
 
   for (let i = 1; i <= 30; i++) {
-    const val = document.getElementById("p" + i).value.trim();
-    const yemek = document.getElementById("yemek" + i).checked;
-    if (val) {
-      store.put({ id: "p" + i, ad: val, yemekUcreti: yemek });
-      const opt = document.createElement("option");
-      opt.value = val;
-      opt.text = val;
-      personelCombo.appendChild(opt);
-    }
-  }
+    const input = document.getElementById("p" + i);
+    const checkbox = document.getElementById("yemek" + i);
 
-  alert("Personel listesi ve veritabanı güncellendi.");
+    if (input) input.value = "";
+    if (checkbox) checkbox.checked = false;
+  }
 }
 
 function yuklePersonellerCombobox() {
@@ -1525,6 +1619,9 @@ function yuvarla5Uzeri(tutar) {
 
 function olusturHakedişRaporu() {
   const seciliTarih = document.getElementById("raporTarihi").value;
+  const siranoInput = parseInt(document.getElementById("baslangicSirano")?.value || "0");
+  const siranoStr = siranoInput.toString().padStart(3, "0");
+
   const tx = db.transaction(["kayitlar", "Personeller"], "readonly");
   const kayitlarStore = tx.objectStore("kayitlar");
   const personelStore = tx.objectStore("Personeller");
@@ -1541,32 +1638,38 @@ function olusturHakedişRaporu() {
       if (k.cancelled) return false;
       if (!k.kayitZamani) return false;
       const kayitTarih = k.kayitZamani.split(" ")[0].split(".").reverse().join("-");
-      return kayitTarih === seciliTarih;
+      if (kayitTarih !== seciliTarih) return false;
+
+      if (siranoInput > 0) {
+        const parca = (k.sirano || "").split("-")[1]; // örn: "017"
+        if (!parca || parca < siranoStr) return false;
+      }
+
+      return true;
     });
 
-const ozet = {};
+    const ozet = {};
 
-gunlukKayitlar.forEach(k => {
-  const p = k.personel || "Personel Seçilmemiş";
+    gunlukKayitlar.forEach(k => {
+      const p = k.personel || "Personel Seçilmemiş";
 
-  const anaKayit = fiyatlarCache.find(f => f.kod === k.anaIslem);
-  const anaUcret = anaKayit ? anaKayit.tutar : 0;
+      const anaKayit = fiyatlarCache.find(f => f.kod === k.anaIslem);
+      const anaUcret = anaKayit ? anaKayit.tutar : 0;
 
-  // Ekstra işlem toplamı: kodlarla eşleşen E kodlu satırlar
-  const ekstraToplam = (k.ekstra || []).reduce((sum, kod) => {
-    const f = fiyatlarCache.find(f => f.kod === kod);
-    return sum + (f ? f.tutar : 0);
-  }, 0);
+      const ekstraToplam = (k.ekstra || []).reduce((sum, kod) => {
+        const f = fiyatlarCache.find(f => f.kod === kod);
+        return sum + (f ? f.tutar : 0);
+      }, 0);
 
-  const ucretFarki = k.ucretFarki || 0;
-  const toplam = anaUcret + ekstraToplam + ucretFarki;
+      const ucretFarki = k.ucretFarki || 0;
+      const toplam = anaUcret + ekstraToplam + ucretFarki;
 
-  if (!ozet[p]) {
-    ozet[p] = { adet: 0, toplam: 0, yemek: yemekUcretiAlanlar.has(p) };
-  }
-  ozet[p].adet += 1;
-  ozet[p].toplam += toplam;
-});
+      if (!ozet[p]) {
+        ozet[p] = { adet: 0, toplam: 0, yemek: yemekUcretiAlanlar.has(p) };
+      }
+      ozet[p].adet += 1;
+      ozet[p].toplam += toplam;
+    });
 
     let html = `
       <table border="1" cellpadding="5" cellspacing="0" style="width:100%; max-width:680px;">
@@ -1603,22 +1706,32 @@ gunlukKayitlar.forEach(k => {
 
     html += `</table>`;
     document.getElementById("raporTabloAlani").innerHTML = html;
+
+    // Günsonu özeti de filtrelenmiş kayıtlarla çalışır
     olusturGunsonuOzet(gunlukKayitlar, genelHakediş + genelYemek, kayitlar, seciliTarih);
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("raporTarihi");
-  if (input) {
-    input.addEventListener("change", olusturHakedişRaporu);
-  }
-});
-
-
 
 function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, seciliTarih) {
-  
-  let cariAdet = gunlukKayitlar.filter(k => (k.vadeliOdeme || 0) > 0).length;
+  const siranoInput = parseInt(document.getElementById("baslangicSirano")?.value || "0");
+  const siranoStr = siranoInput.toString().padStart(3, "0");
+
+  const filtreliKayitlar = gunlukKayitlar.filter(k => {
+    if (siranoInput <= 0) return true;
+    const parca = (k.sirano || "").split("-")[1];
+    return parca && parca >= siranoStr;
+  });
+
+  const siranoAralik = filtreliKayitlar
+    .map(k => parseInt((k.sirano || "").split("-")[1]))
+    .filter(n => !isNaN(n))
+    .sort((a, b) => a - b);
+
+  const ilkSiraNo = siranoAralik[0] || "-";
+  const sonSiraNo = siranoAralik[siranoAralik.length - 1] || "-";
+
+  let cariAdet = filtreliKayitlar.filter(k => (k.vadeliOdeme || 0) > 0).length;
 
   let toplamNakit = 0;
   let toplamKart = 0;
@@ -1627,7 +1740,7 @@ function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, sec
   let odememisToplam = 0;
   let toplamCiro = 0;
 
-  gunlukKayitlar.forEach(k => {
+  filtreliKayitlar.forEach(k => {
     const nakit = k.nakitOdeme || 0;
     const kart = k.krediKartOdeme || 0;
     const vadeli = k.vadeliOdeme || 0;
@@ -1636,27 +1749,22 @@ function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, sec
     const toplam = parseFloat((k.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
     const toplamGirilen = nakit + kart + vadeli;
 
-    // Nakitten harici düşülür
     toplamNakit += nakit;
     toplamKart += kart;
     toplamVadeli += vadeli;
     toplamHarici += harici;
 
-    // Eksik ödeme varsa ödenmemiş olarak eklenir
     if (toplamGirilen < toplam) {
       odememisToplam += (toplam - toplamGirilen);
     }
 
-    // Ciro = toplam - harici
     toplamCiro += (toplam - harici);
   });
 
-  toplamNakit -= (toplamHarici + personelHakToplami); // Harici nakitten düşülür
+  toplamNakit -= (toplamHarici + personelHakToplami);
 
-  // Silinmiş kayıtları bul
   const silinmisAdet = tumKayitlar.filter(k => {
-    if (!k.cancelled) return false;
-    if (!k.kayitZamani) return false;
+    if (!k.cancelled || !k.kayitZamani) return false;
     const tarih = k.kayitZamani.split(" ")[0].split(".").reverse().join("-");
     return tarih === seciliTarih;
   }).length;
@@ -1664,24 +1772,34 @@ function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, sec
   let html = `
     <h3>Günsonu Özeti</h3>
     <table border="1" cellpadding="5" cellspacing="0">
-      
       <tr><td>1) Personel Hakediş Genel Toplamı</td><td style="text-align:right;">${personelHakToplami.toFixed(0)} ₺</td></tr>
       <tr><td>2) Nakit</td><td style="text-align:right;">${toplamNakit.toFixed(0)} ₺</td></tr>
       <tr><td>3) Kredi Kartı</td><td style="text-align:right;">${toplamKart.toFixed(0)} ₺</td></tr>
       <tr><td>4) Cari Ödemeler <span style="font-size:smaller;">(Adet: ${cariAdet})</span></td><td style="text-align:right;">${toplamVadeli.toFixed(0)} ₺</td></tr>
       <tr><td>5) Ödenmemişler</td><td style="text-align:right;">${odememisToplam.toFixed(0)} ₺</td></tr>
-      <tr><td>6) Toplam Ciro</td><td style="text-align:right;">${toplamCiro.toFixed(0)} ₺</td></tr>
-      <tr><td colspan="2" style="font-style: italic;"><span style="color:red;">Not: Alınan toplam harici ücret = ${toplamHarici.toFixed(0)} ₺</span></td></tr>
-      <tr><td colspan="2" style="font-style: italic; color:red;">Not: Bugün ${silinmisAdet} kayıt silinmiş.</td></tr>
-    </table>
-  `;
+      <tr><td>6) Toplam Ciro</td><td style="text-align:right;">${toplamCiro.toFixed(0)} ₺</td></tr>`;
+
+  if (toplamHarici > 0) {
+    html += `<tr><td colspan="2" style="font-style: italic; color:red;">Not: Alınan toplam harici ücret = ${toplamHarici.toFixed(0)} ₺</td></tr>`;
+  }
+
+  if (silinmisAdet > 0) {
+    html += `<tr><td colspan="2" style="font-style: italic; color:red;">Not: Bugün ${silinmisAdet} kayıt silinmiş.</td></tr>`;
+  }
+
+  if (filtreliKayitlar.length > 0) {
+    html += `<tr><td colspan="2" style="font-style: italic; color:red;">
+      Not: ${seciliTarih.split("-").reverse().join(".")} tarihine ait ${ilkSiraNo}-${sonSiraNo} sıra numaralı kayıtlar listelenmiştir.
+    </td></tr>`;
+  }
+
+  html += `</table>`;
 
   const container = document.createElement("div");
   container.innerHTML = html;
-  
-  // Cari bazlı vadeli ödemeler
+
   const cariOzet = {};
-  gunlukKayitlar.forEach(k => {
+  filtreliKayitlar.forEach(k => {
     if ((k.vadeliOdeme || 0) > 0 && !k.cancelled) {
       const cari = k.cari || "Belirtilmemiş";
       if (!cariOzet[cari]) cariOzet[cari] = { adet: 0, toplam: 0 };
@@ -1704,6 +1822,9 @@ function olusturGunsonuOzet(gunlukKayitlar, personelHakToplami, tumKayitlar, sec
   if (cariTable) document.getElementById("raporTabloAlani").innerHTML += cariTable;
 }
 
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const cariSelect = document.getElementById("cari");
   const odemeTipiSelect = document.getElementById("odemeTipi");
@@ -1722,16 +1843,6 @@ document.addEventListener("DOMContentLoaded", () => {
   cariSelect.addEventListener("click", cariDegisimKontrol);
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-
-  document.getElementById("btnAyarlar")?.addEventListener("click", () => {
-    gizleTumFormlar();
-    document.getElementById("ayarlarFormu").style.display = "block";
-    fiyatlariYukleVeCachele(gosterFiyatFormu); // ✅ doğru
-  });
-
-});
-
 
 function kaydetAyarlar() {
   const ayar1 = document.getElementById("ayar1").value;
@@ -1740,7 +1851,7 @@ function kaydetAyarlar() {
 }
 
 function gizleTumFormlar() {
-  ['kayitFormu', 'listeFormu', 'personelFormu', 'cariFormu', 'raporFormu', 'ayarlarFormu'].forEach(id => {
+  ['kayitFormu', 'listeFormu', 'personelFormu', 'cariFormu', 'raporFormu', 'ayarlarFormu','fiyatFormu','gelismisAyarlarFormu'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = "none";
   });
@@ -1777,6 +1888,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("raporFormu").style.display = "block";
     olusturHakedişRaporu();
   });
+
+document.getElementById("btnAyarlar")?.addEventListener("click", () => {
+  gizleTumFormlar();
+
+  document.getElementById("ayarlarFormu").style.display = "block";
+  });
+
+document.getElementById("btnFiyatListesi")?.addEventListener("click", () => {
+  gizleTumFormlar();
+  gosterSadeceFiyatlar();
+});
 
 });
 
