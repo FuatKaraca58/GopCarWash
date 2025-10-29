@@ -1148,10 +1148,13 @@ function listeleKayitlar() {
     tbody.innerHTML = "";
 
     const kayitlar = e.target.result;
-    const bugunKayitlar = kayitlar.filter(k => {
-      const tarih = k.kayitZamani?.split(" ")[0];
-      return tarih === bugunStr;
-    });
+
+// 🔸 iptalleri de listeye dahil et ama görsel olarak ayırt et
+const bugunKayitlar = kayitlar.filter(k => {
+  const tarih = k.kayitZamani?.split(" ")[0];
+  return tarih === bugunStr; // artık iptalleri de getiriyor
+});
+
 
     bugunKayitlar.sort((a, b) => b.sirano.localeCompare(a.sirano)).forEach(d => {
       const tr = document.createElement("tr");
@@ -1185,11 +1188,16 @@ function listeleKayitlar() {
       tbody.appendChild(tr);
     });
 
-    const toplamUcret = bugunKayitlar.reduce((acc, d) => {
-      const t = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
-      return acc + t;
-    }, 0);
-    const aracSayisi = bugunKayitlar.length;
+// 🔸 iptal kayıtları hariç toplam hesaplama (her türlü veri tipiyle uyumlu)
+const toplamUcret = bugunKayitlar.reduce((acc, d) => {
+  const isCancelled = String(d.cancelled).toLowerCase() === "true";
+  if (isCancelled) return acc; // iptal kayıtları atla
+  const t = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
+  return acc + t;
+}, 0);
+
+// 🔸 iptal kayıtları hariç araç sayısı
+const aracSayisi = bugunKayitlar.filter(d => String(d.cancelled).toLowerCase() !== "true").length;
 
     const ozetDiv = document.getElementById("listeOzeti");
     if (ozetDiv) {
@@ -1311,11 +1319,18 @@ function filtreleKayitlar() {
       tbody.appendChild(tr);
     });
 
-    const toplamUcret = filtered.reduce((acc, d) => {
-      const t = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
-      return acc + t;
-    }, 0);
-    const aracSayisi = filtered.length;
+// 🔸 iptal kayıtları hariç toplam hesaplama (her türlü veri tipiyle uyumlu)
+const toplamUcret = bugunKayitlar.reduce((acc, d) => {
+  const isCancelled = String(d.cancelled).toLowerCase() === "true";
+  if (isCancelled) return acc; // iptal kayıtları atla
+  const t = parseFloat((d.toplamOdeme || "0").replace(/[^\d.]/g, "")) || 0;
+  return acc + t;
+}, 0);
+
+// 🔸 iptal kayıtları hariç araç sayısı
+const aracSayisi = bugunKayitlar.filter(d => String(d.cancelled).toLowerCase() !== "true").length;
+
+
     const ozetDiv = document.getElementById("listeOzeti");
     if (ozetDiv) {
       ozetDiv.innerHTML = `
